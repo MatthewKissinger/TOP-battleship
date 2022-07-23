@@ -1,0 +1,27 @@
+{
+  "name": "top-battleship",
+  "version": "1.0.0",
+  "description": "Battleship game",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MatthewKissinger/TOP-battleship.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MatthewKissinger/TOP-battleship/issues"
+  },
+  "homepage": "https://github.com/MatthewKissinger/TOP-battleship#readme",
+  "devDependencies": {
+    "@babel/preset-env": "^7.18.9",
+    "jest": "^28.1.3"
+  }
+}
