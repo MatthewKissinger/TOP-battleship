@@ -2,8 +2,6 @@ const shipFactory = (name, length, coordinates) => {
     const hitArray = [];
     let sunk = false;
 
-    // create getter functions for length, hitArray and coordinates
-    // research public vs. private methods for factory functions
     const getName = () => {
         console.log(name);
     }
@@ -20,6 +18,10 @@ const shipFactory = (name, length, coordinates) => {
         console.log(coordinates);
     }
 
+    const getSunk = () => {
+        return sunk;
+    }
+
     const hit = (enemyAttack) => {
         if (coordinates.includes(enemyAttack)) {
             hitArray.push(enemyAttack); 
@@ -34,13 +36,13 @@ const shipFactory = (name, length, coordinates) => {
     const isSunk = (hitArray) => {
         if (hitArray.length === length) {
             sunk = true;
-            console.log(`${name} is sunk`);
+            return `${name} is sunk`;
         } else {
-            console.log(`${name} is not sunk`);
+            return `${name} is not sunk`;
         }
     }
 
-    return { getName, getLength, getHitArray, getCoordinates, hit, isSunk }
+    return { getName, getLength, getHitArray, getCoordinates, getSunk, hit, isSunk }
 }
 
 export { shipFactory }
