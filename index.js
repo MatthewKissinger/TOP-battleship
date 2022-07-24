@@ -9,11 +9,11 @@ let patrolBoat1 = shipFactory('patrolBoat1', 2, ['a2', 'a3']);
 
 const mattBoard = gameboardFactory('Matt');
 
-console.log(mattBoard.placedShips);
+console.log(mattBoard.gameboard);
 
 mattBoard.placeShip(patrolBoat1);
 
-console.log(mattBoard.placedShips);
+console.log(mattBoard.gameboard.ships[0].coordinates);
 
 
 
