@@ -1,9 +1,9 @@
-const shipFactory = (name, length, coordinates) => {
+const shipFactory = (shipName, length, coordinates) => {
     const hitArray = [];
     let sunk = false;
 
     const getName = () => {
-        console.log(name);
+        return shipName;
     }
 
     const getLength = () => {
@@ -15,7 +15,7 @@ const shipFactory = (name, length, coordinates) => {
     }
 
     const getCoordinates = () => {
-        console.log(coordinates);
+        return coordinates;
     }
 
     const getSunk = () => {
@@ -27,18 +27,18 @@ const shipFactory = (name, length, coordinates) => {
             hitArray.push(enemyAttack); 
             getHitArray();
             isSunk(hitArray);
-            return `${enemyAttack} is a direct hit on ${name}`;
+            return `${enemyAttack} is a direct hit on ${shipName}`;
         } else {
-            return `${enemyAttack} is a miss on ${name}`;
+            return `${enemyAttack} is a miss on ${shipName}`;
         }
     }
     
     const isSunk = (hitArray) => {
         if (hitArray.length === length) {
             sunk = true;
-            return `${name} is sunk`;
+            return `${shipName} is sunk`;
         } else {
-            return `${name} is not sunk`;
+            return `${shipName} is not sunk`;
         }
     }
 
