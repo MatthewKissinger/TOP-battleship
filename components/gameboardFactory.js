@@ -56,10 +56,10 @@ const gameboardFactory = (user) => {
             if (ship.sunk !== true) {
                 console.log('some ships remain');
                 return false;
-            } else {
-                console.log('all ships have been destroyed');
-                return true;
-            }
+            } 
+
+            console.log('all ships have been destroyed');
+            return true;
         })
     }
 
