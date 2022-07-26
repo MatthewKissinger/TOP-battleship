@@ -1,23 +1,34 @@
-
 import { shipFactory } from "../components/shipFactory";
 import { gameboardFactory } from "../components/gameboardFactory";
 
-
-test('place ship into placedShips array', () => {
-    let patrolBoat1 = shipFactory('patrolBoat1', 2, ['a2', 'a3']);
+    // global mock variables
+    let patrolBoat = shipFactory('patrolBoat', 2, ['a2', 'a3']);
 
     const mattBoard = gameboardFactory('Matt');
-    mattBoard.placeShip(patrolBoat1);
+    mattBoard.placeShip(patrolBoat);
 
-    expect(mattBoard.gameboard).toEqual({
-        user: 'Matt',
-        ships: [
-            {
-            shipName: 'patrolBoat1',
-            coordinates: ['a2', 'a3']
-            }    
-        ],
-        hits: [],
-        misses: []
-    });
+test('place ship into placedShips array', () => {
+
+    expect(mattBoard.gameboard.ships[0].shipName).toEqual('patrolBoat');
+})
+
+test('receive an attack as a hit', () => {
+
+    mattBoard.receiveAttack('a2');
+
+    expect(mattBoard.gameboard.hits).toEqual(['a2']);
+})
+
+test('receive an attack as a miss', () => {
+
+    mattBoard.receiveAttack('a4');
+
+    expect(mattBoard.gameboard.misses).toEqual(['a4']);
+})
+
+test('allShipsSunk function', () => {
+    mattBoard.receiveAttack('a2');
+    mattBoard.receiveAttack('a3');
+
+    expect(mattBoard.allShipsSunk()).toEqual(true);
 })

@@ -10,6 +10,8 @@ const gameboardFactory = (user) => {
         misses: []
     }
 
+    let fleetDestroyed = false;
+
     // can't place a ship on an already used location
     // maybe test for this during UI implementation
     const placeShip = (shipName) => {
@@ -51,6 +53,7 @@ const gameboardFactory = (user) => {
     }
 
     const allShipsSunk = () => {
+        let result;
 
         gameboard.ships.every((ship) => {
             if (ship.sunk !== true) {
@@ -59,11 +62,15 @@ const gameboardFactory = (user) => {
             } 
 
             console.log('all ships have been destroyed');
+            // fleetDestroyed = true;
+            result = true;
             return true;
         })
+
+        return result;
     }
 
-    return { gameboard, placeShip, receiveAttack}
+    return { gameboard, fleetDestroyed, placeShip, receiveAttack, allShipsSunk}
 }
 
 export { gameboardFactory }
