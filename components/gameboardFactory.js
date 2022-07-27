@@ -1,5 +1,5 @@
 
-// gameboard can take in coordinates that are 1 - 10 & a - J
+// gameboard can take in coordinates that are between 1 - 10 & a - J
 
 const gameboardFactory = (user) => {
 
@@ -53,19 +53,19 @@ const gameboardFactory = (user) => {
     }
 
     const allShipsSunk = () => {
-        let result;
 
-        gameboard.ships.every((ship) => {
+        let result = gameboard.ships.every((ship) => {
             if (ship.sunk !== true) {
-                console.log('some ships remain');
                 return false;
             } 
-
-            console.log('all ships have been destroyed');
-            // fleetDestroyed = true;
-            result = true;
             return true;
         })
+
+        if (result === false) {
+            console.log('some ships remain');
+        } else {
+            console.log('all ships have been destroyed');
+        }
 
         return result;
     }

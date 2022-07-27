@@ -2,14 +2,14 @@ import { shipFactory } from "../components/shipFactory";
 import { gameboardFactory } from "../components/gameboardFactory";
 
     // global mock variables
-    let patrolBoat = shipFactory('patrolBoat', 2, ['a2', 'a3']);
+    let destroyer = shipFactory('destroyer', 2, ['a2', 'a3']);
 
     const mattBoard = gameboardFactory('Matt');
-    mattBoard.placeShip(patrolBoat);
+    mattBoard.placeShip(destroyer);
 
 test('place ship into placedShips array', () => {
 
-    expect(mattBoard.gameboard.ships[0].shipName).toEqual('patrolBoat');
+    expect(mattBoard.gameboard.ships[0].shipName).toEqual('destroyer');
 })
 
 test('receive an attack as a hit', () => {
