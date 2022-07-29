@@ -38,12 +38,11 @@ const gameboardFactory = (user) => {
                 ship.hit(enemyAttack);
                 ship.sunk = ship.getSunk();
                 hit = true;
+                if (ship.sunk === true) {
+                    console.log(`${ship.shipName} is sunk`);
+                    allShipsSunk();
+                }
             } 
-
-            if (ship.sunk === true) {
-                console.log(`${ship.shipName} is sunk`);
-                allShipsSunk();
-            }
         })
 
         if (hit === false) {

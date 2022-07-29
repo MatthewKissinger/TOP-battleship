@@ -22,7 +22,7 @@ let submarine = shipFactory('submarine', 3, ['b4', 'c4','d4']);
 // add all 5 ships for tests more test ships
 // add computer player for tests
 
-const player = playerFactory('Matt');
+const player = playerFactory('player');
 const computer = playerFactory('computer');
 
 const playerBoard = gameboardFactory(player.name);
@@ -32,12 +32,12 @@ playerBoard.placeShip(destroyer);
 playerBoard.placeShip(submarine);
 
 computer.playerAttack('a2', playerBoard);
+computer.playerAttack('a3', playerBoard);
 
-// playerBoard.receiveAttack('a2');
+// computer.playerAttack('a2', playerBoard);
 
+computer.playerAttack(computer.randomCoordinate(), playerBoard);
 // playerBoard.receiveAttack('b4');
-
-// playerBoard.receiveAttack('a3');
 
 // playerBoard.receiveAttack('c4');
 
