@@ -1,0 +1,39 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid orange;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 7%;
+    border: 1px solid blue;
+}
+
+.message-display {
+    border: 1px solid purple;
+    height: 8%;
+}
+
+.btn-container {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    gap: 2rem;
+    height: 5%;
+    border: 1px solid green;
+}
+
+main {
+    border: 1px solid red;
+    height: 80%;
+}

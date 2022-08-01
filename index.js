@@ -11,37 +11,32 @@
 // destroyer - length 2
 
 // -- JS SANDBOX --
+import { renderDOM } from "./components/domRender.js";
 import { shipFactory } from "./components/shipFactory.js";
 import { gameboardFactory } from "./components/gameboardFactory.js";
 import { playerFactory } from "./components/playerFactory.js"
 
 // testing variable
-let destroyer = shipFactory('destroyer', 2, ['a2', 'a3']);
-let submarine = shipFactory('submarine', 3, ['b4', 'c4','d4']);
+// let destroyer = shipFactory('destroyer', 2, ['a2', 'a3']);
+// let submarine = shipFactory('submarine', 3, ['b4', 'c4','d4']);
 
-// add all 5 ships for tests more test ships
-// add computer player for tests
+// const player = playerFactory('player');
+// const computer = playerFactory('computer');
 
-const player = playerFactory('player');
-const computer = playerFactory('computer');
+// const playerBoard = gameboardFactory(player.name);
+// const compBoard = gameboardFactory(computer.name);
 
-const playerBoard = gameboardFactory(player.name);
-const compBoard = gameboardFactory(computer.name);
-
-playerBoard.placeShip(destroyer);
-playerBoard.placeShip(submarine);
-
-computer.playerAttack('a2', playerBoard);
-computer.playerAttack('a3', playerBoard);
+// playerBoard.placeShip(destroyer);
+// playerBoard.placeShip(submarine);
 
 // computer.playerAttack('a2', playerBoard);
+// computer.playerAttack('a3', playerBoard);
 
-computer.playerAttack(computer.randomCoordinate(), playerBoard);
-// playerBoard.receiveAttack('b4');
 
-// playerBoard.receiveAttack('c4');
+// computer.playerAttack(computer.randomCoordinate(), playerBoard);
 
-// playerBoard.receiveAttack('d4');
+renderDOM();
+
 
 
 
