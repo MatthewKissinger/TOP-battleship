@@ -4,11 +4,14 @@
     box-sizing: border-box;
 }
 
+/* variables */
+
+
+
 body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    border: 1px solid orange;
 }
 
 .header {
@@ -16,12 +19,19 @@ body {
     justify-content: center;
     align-items: center;
     height: 7%;
-    border: 1px solid blue;
+    font-weight: 700;
+    font-size: 2.5rem;
 }
 
 .message-display {
-    border: 1px solid purple;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(204, 193, 204);
+    border-radius: 10px;
     height: 8%;
+    width: 40%;
+    margin: 0 auto;
 }
 
 .btn-container {
@@ -30,10 +40,43 @@ body {
     justify-content: center;
     gap: 2rem;
     height: 5%;
-    border: 1px solid green;
+    margin: 1rem 0;
+}
+
+.btn-container button {
+    background-color: orange;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    height: 2.75rem;
+    width: 7rem;
+    border-radius: 6px;
 }
 
 main {
-    border: 1px solid red;
+    display: flex;
     height: 80%;
+}
+
+.user-container, .comp-container {
+    border: 1px solid orange;
+    height: 700px;
+    width: 50%;
+}
+
+.user-ship-cont, .comp-ship-cont {
+    border: 1px solid rgb(141, 141, 232);
+    width: 15%;
+    height: 60%;
+}
+
+.user-gameboard, .comp-gameboard {
+    border: 1px solid red;
+}
+
+/* hide toggle class */
+.hide {
+    display: none;
 }

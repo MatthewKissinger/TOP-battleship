@@ -14,10 +14,23 @@
     <div class="btn-container">
         <button class="reset-ships">reset ships</button>
         <button class="game-start">start</button>
-        <button class="new-game">rematch</button>
+        <button class="rematch hide">rematch</button>
     </div>
     
-    <main>place gameboards here</main>
+    <main>
+        <div class="user-container">
+            <h1>User</h1>
+            <div class="user-ship-cont">ship icons</div>
+            <table class="user-gameboard"></table>
+        </div>
+        <div class="comp-container">
+            <h1>Computer</h1>
+            <div class="comp-ship-cont">ship icons</div>
+            <table class="user-gameboard">
+
+            </table>
+        </div>
+    </main>
 
     <script src="./index.js" type="module"></script>
 </body>
