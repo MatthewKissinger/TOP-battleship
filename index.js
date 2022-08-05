@@ -1,5 +1,7 @@
 // TO DO 
 
+// create the grid layout for each gameboard container
+
 // # of ships and sizes to be placed on the gameboard
 // go off of the hasbro rules for ages 7+
 
