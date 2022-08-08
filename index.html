@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <title>Battleship Game</title>
 </head>
 <body>
@@ -19,16 +22,18 @@
     
     <main>
         <div class="user-container">
-            <h1>User</h1>
+            <h1 class="title--cont">User</h1>
             <div class="user-ship-cont">ship icons</div>
-            <table class="user-gameboard"></table>
+            <div class="user-gameboard">
+                <div class="user-tile-cont"></div>
+            </div>
         </div>
         <div class="comp-container">
-            <h1>Computer</h1>
+            <h1 class="title--cont">Computer</h1>
             <div class="comp-ship-cont">ship icons</div>
-            <table class="comp-gameboard">
-
-            </table>
+            <div class="comp-gameboard">
+                <div class="comp-tile-cont"></div>
+            </div>
         </div>
     </main>
 
