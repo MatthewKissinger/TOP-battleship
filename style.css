@@ -82,16 +82,45 @@ main {
 
 .user-ship-cont, .comp-ship-cont {
     border: 1px solid rgb(141, 141, 232);
+    height: 90%;
+    align-self: flex-end;
 }
 
 .user-gameboard, .comp-gameboard {
-    border: 1px solid red;
+    /* border: 1px solid red; */
+    display: grid;
+    grid-template-columns: .6fr 5fr;
+    grid-template-rows: .6fr 5fr;
+}
+
+.comp-gameboard-col-label, .user-gameboard-col-label {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
+    /* border: 1px solid green; */
+}
+
+.comp-gameboard-row-label, .user-gameboard-row-label {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.tile-label {
+    width: 50px;
+    height: 50px;
+    /* border: 1px solid purple; */
+    display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .user-tile-cont, .comp-tile-cont {
+    grid-column: 2 / 3;
+    grid-row: 2 / 3;
     border: 1px solid black;
     width: 500px;
     height: 500px;
