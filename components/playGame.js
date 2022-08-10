@@ -1,7 +1,7 @@
 import { playerFactory } from "./playerFactory.js";
 import { gameboardFactory } from "./gameboardFactory.js";
 import { shipFactory } from "./shipFactory.js";
-import { renderDOM, updateGameboards } from "./domRender.js";
+import { updateGameboard } from "./domRender.js";
 
 // 1 of each of the following ships
 // carrier - length 5
@@ -11,11 +11,18 @@ import { renderDOM, updateGameboards } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// ** add in the rest of the player and comp ships
-// test out a turn phase
+// ** add in 2 computer ships
+// ** test out a game with the appropriate messages and event listeners being displayed
 
 // module global variables
 let turn = 'player';
+
+// DOM cache
+let messageDisplay = document.querySelector('.message-display');
+let startBtn = document.querySelector('.game-start');
+
+let userGameboard = document.querySelector('.user-tile-cont');
+let compGameboard = document.querySelector('.comp-tile-cont');
 
 const playGame = () => {
     // create players
@@ -33,14 +40,23 @@ const playGame = () => {
     playerBoard.placeShip(destroyer);
     playerBoard.placeShip(submarine);
 
-    updateGameboards(playerBoard);
+    let compDestroyer = shipFactory('destroyer', 2, ['c1', 'd1']);
+    let compSubmarine = shipFactory('submarine', 3, ['e5', 'e6', 'e7']);
 
-    gameLoop();
+    compBoard.placeShip(compDestroyer);
+    compBoard.placeShip(compSubmarine);
+
+    // renders the ships placed on the gameboard
+    updateGameboard(playerBoard);
+    updateGameboard(compBoard);
+
+    startBtn.addEventListener('click', () => {
+        gameLoop();
+    })
 }
 
 const gameLoop = () => {
     console.log('let the game begin');
-    console.log(`${turn}'s turn`);
 
     if (turn === 'player') {
         playerTurn();
@@ -50,7 +66,11 @@ const gameLoop = () => {
 }
 
 const playerTurn = () => {
-    console.log('my turn');
+    messageDisplay.innerText = `Player's turn: select a tile on the computer's board`;
+
+    compGameboard.addEventListener('click', (e) => {
+        console.log(e.target);
+    })
 }
 
 const compTurn = () => {
