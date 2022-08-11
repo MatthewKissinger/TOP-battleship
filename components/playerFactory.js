@@ -23,7 +23,8 @@ const playerFactory = (name) => {
         if (enemyBoard.gameboard.misses.includes(coordinate) || enemyBoard.gameboard.hits.includes(coordinate)) {
             console.log('that square has been called');
         } else {
-            enemyBoard.receiveAttack(coordinate);
+            let message = enemyBoard.receiveAttack(coordinate);
+            return message;
         }
     }
 

@@ -28,18 +28,19 @@ const gameboardFactory = (user) => {
     // create a receiveAttack function -- will test whether a ship is hit in the gameboard object -- if a ship is hit push the coordinate to the hits array, if not push to the misses array
     const receiveAttack = (enemyAttack) => {
         let hit = false;
+        let shipIsSunk = false;
 
         // loop through each placed ship, if there is a hit on a ship
         // push that hit to the hit array on gameboard and change the state of the hit variable to true
         gameboard.ships.forEach((ship) => {
             if (ship.coordinates.includes(enemyAttack)) {
-                console.log(`${enemyAttack} is a direct hit on ${ship.shipName}`);
                 gameboard.hits.push(enemyAttack);
                 ship.hit(enemyAttack);
                 ship.sunk = ship.getSunk();
                 hit = true;
+
                 if (ship.sunk === true) {
-                    console.log(`${ship.shipName} is sunk`);
+                    shipIsSunk = true;
                     allShipsSunk();
                 }
             } 
@@ -49,6 +50,8 @@ const gameboardFactory = (user) => {
             console.log(`${enemyAttack} is a miss`);
             gameboard.misses.push(enemyAttack);
         }
+
+        return { hit, shipIsSunk};
     }
 
     const allShipsSunk = () => {

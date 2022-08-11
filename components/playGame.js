@@ -1,7 +1,7 @@
 import { playerFactory } from "./playerFactory.js";
 import { gameboardFactory } from "./gameboardFactory.js";
 import { shipFactory } from "./shipFactory.js";
-import { updateGameboard } from "./domRender.js";
+import { renderShips, renderHitOrMiss } from "./domRender.js";
 
 // 1 of each of the following ships
 // carrier - length 5
@@ -11,7 +11,7 @@ import { updateGameboard } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// ** add in 2 computer ships
+// ** display a hit or miss on comp board
 // ** test out a game with the appropriate messages and event listeners being displayed
 
 // module global variables
@@ -20,6 +20,7 @@ let turn = 'player';
 // DOM cache
 let messageDisplay = document.querySelector('.message-display');
 let startBtn = document.querySelector('.game-start');
+let resetBtn = document.querySelector('.reset-ships');
 
 let userGameboard = document.querySelector('.user-tile-cont');
 let compGameboard = document.querySelector('.comp-tile-cont');
@@ -47,34 +48,61 @@ const playGame = () => {
     compBoard.placeShip(compSubmarine);
 
     // renders the ships placed on the gameboard
-    updateGameboard(playerBoard);
-    updateGameboard(compBoard);
+    renderShips(playerBoard);
+    renderShips(compBoard);
 
     startBtn.addEventListener('click', () => {
+        startBtn.classList.add('hide');
+        resetBtn.classList.add('hide');
         gameLoop();
     })
-}
 
-const gameLoop = () => {
-    console.log('let the game begin');
-
-    if (turn === 'player') {
-        playerTurn();
-    } else {
-        compTurn();
+    const gameLoop = () => {
+        console.log('let the game begin');
+    
+        if (turn === 'player') {
+            playerTurn();
+        } else {
+            compTurn();
+        }
     }
-}
 
-const playerTurn = () => {
-    messageDisplay.innerText = `Player's turn: select a tile on the computer's board`;
+    const playerTurn = () => {
+        messageDisplay.innerText = `Player's turn: select a tile on the computer's board`;
+    
+        compGameboard.addEventListener('click', (e) => {
+            let selection = e.target.dataset.coordinate;
 
-    compGameboard.addEventListener('click', (e) => {
-        console.log(e.target);
-    })
-}
+            let message = player.playerAttack(selection, compBoard);
 
-const compTurn = () => {
+            console.log(message);
 
+            let displayedMsg;
+
+            if (message.hit === false) {
+                displayedMsg = 'is a miss';
+                renderHitOrMiss(e.target, 'miss');
+
+            } else if (message.hit === true) {
+                displayedMsg = 'is a hit';
+                renderHitOrMiss(e.target, 'hit');
+            } else {
+                // displayedMsg = 'has already been selected, choose again'
+                return;
+            }
+
+            if (message.hit === true && message.shipIsSunk === true) {
+                messageDisplay.innerText = `${selection} ${displayedMsg}, battleship is sunk`;
+            } else {
+                messageDisplay.innerText = `${selection} ${displayedMsg}`;
+            }
+            // console.log(compBoard);
+        })
+    }
+
+    const compTurn = () => {
+
+    }
 }
 
 export { playGame }

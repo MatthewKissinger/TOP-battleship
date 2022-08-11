@@ -59,7 +59,7 @@ const renderDOM = () => {
 }
 
 // takes in the hits and misses for each gameboard and represents the value for each coordinate on the corresponding tile's dataset-coordinate  
-const updateGameboard = (gameBoard) => {
+const renderShips = (gameBoard) => {
     let userType = gameBoard.gameboard.user;
     let shipArray = gameBoard.gameboard.ships;
 
@@ -88,4 +88,21 @@ const updateGameboard = (gameBoard) => {
     })
 }
 
-export { renderDOM, updateGameboard }
+const renderHitOrMiss = (targetDiv, hitValue) => {
+
+    if (hitValue === 'miss') {
+        let missMarker = document.createElement('div');
+        missMarker.classList.add('miss-marker');
+
+        targetDiv.appendChild(missMarker);
+    } 
+    
+    if (hitValue === 'hit') {
+        let hitMarker = document.createElement('div');
+        hitMarker.classList.add('hit-marker');
+
+        targetDiv.appendChild(hitMarker);
+    }
+}
+
+export { renderDOM, renderShips, renderHitOrMiss }
