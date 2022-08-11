@@ -29,6 +29,8 @@ const gameboardFactory = (user) => {
     const receiveAttack = (enemyAttack) => {
         let hit = false;
         let shipIsSunk = false;
+        let sunkShipName;
+        let gameOver;
 
         // loop through each placed ship, if there is a hit on a ship
         // push that hit to the hit array on gameboard and change the state of the hit variable to true
@@ -41,7 +43,8 @@ const gameboardFactory = (user) => {
 
                 if (ship.sunk === true) {
                     shipIsSunk = true;
-                    allShipsSunk();
+                    sunkShipName = ship.shipName;
+                    gameOver = allShipsSunk();
                 }
             } 
         })
@@ -51,7 +54,7 @@ const gameboardFactory = (user) => {
             gameboard.misses.push(enemyAttack);
         }
 
-        return { hit, shipIsSunk};
+        return { hit, shipIsSunk, sunkShipName, gameOver};
     }
 
     const allShipsSunk = () => {

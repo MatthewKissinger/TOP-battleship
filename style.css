@@ -44,7 +44,7 @@ body {
     margin: 1rem 0;
 }
 
-.btn-container button {
+.btn-container button, .rematch-btn {
     background-color: orange;
     border: none;
     color: white;
@@ -60,6 +60,34 @@ body {
 main {
     display: flex;
     height: 80%;
+    position: relative;
+}
+
+.game-over-cont {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border: 1px solid orange;
+    background-color: orange;
+    color: white;
+    padding: 3rem;
+    border-radius: 12px;
+    height: 250px;
+    width: 300px;
+    left: 42%;
+    top: 10%;
+}
+
+.game-over-msg {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.rematch-btn {
+    background-color: white;
+    color: orange;
 }
 
 .user-container, .comp-container {

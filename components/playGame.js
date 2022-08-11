@@ -11,7 +11,8 @@ import { renderShips, renderHitOrMiss } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// ** display a hit or miss on comp board
+// ** test for all comp battleships being sunk and then display game over
+
 // ** test out a game with the appropriate messages and event listeners being displayed
 
 // module global variables
@@ -77,6 +78,10 @@ const playGame = () => {
 
             console.log(message);
 
+            if (message === undefined) {
+                return;
+            }
+
             let displayedMsg;
 
             if (message.hit === false) {
@@ -86,17 +91,17 @@ const playGame = () => {
             } else if (message.hit === true) {
                 displayedMsg = 'is a hit';
                 renderHitOrMiss(e.target, 'hit');
-            } else {
-                // displayedMsg = 'has already been selected, choose again'
-                return;
             }
 
             if (message.hit === true && message.shipIsSunk === true) {
-                messageDisplay.innerText = `${selection} ${displayedMsg}, battleship is sunk`;
+                messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
             } else {
                 messageDisplay.innerText = `${selection} ${displayedMsg}`;
             }
-            // console.log(compBoard);
+            
+            if (message.gameOver === true) {
+                console.log('player wins, game over');
+            }
         })
     }
 
