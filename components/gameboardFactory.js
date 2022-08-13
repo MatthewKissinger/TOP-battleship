@@ -50,7 +50,7 @@ const gameboardFactory = (user) => {
         })
 
         if (hit === false) {
-            console.log(`${enemyAttack} is a miss`);
+            // console.log(`${enemyAttack} is a miss`);
             gameboard.misses.push(enemyAttack);
         }
 

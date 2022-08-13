@@ -11,9 +11,9 @@ import { renderShips, renderHitOrMiss } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// ** test for all comp battleships being sunk and then display game over
-
-// ** test out a game with the appropriate messages and event listeners being displayed
+// 1) create the logic for back and forth play between player and computer
+// 2) test for computer picking the same coordinate that has already been played
+// 3) create a timeout function for the computer display -- simulate the computer taking the time to think
 
 // module global variables
 let turn = 'player';
@@ -22,6 +22,7 @@ let turn = 'player';
 let messageDisplay = document.querySelector('.message-display');
 let startBtn = document.querySelector('.game-start');
 let resetBtn = document.querySelector('.reset-ships');
+let nextBtn = document.querySelector('.next-btn');
 
 let userGameboard = document.querySelector('.user-tile-cont');
 let compGameboard = document.querySelector('.comp-tile-cont');
@@ -70,43 +71,78 @@ const playGame = () => {
 
     const playerTurn = () => {
         messageDisplay.innerText = `Player's turn: select a tile on the computer's board`;
-    
+
+        // make sure the user is able to click the compGameboard
+        compGameboard.style.pointerEvents = "auto";
+
         compGameboard.addEventListener('click', (e) => {
             let selection = e.target.dataset.coordinate;
 
             let message = player.playerAttack(selection, compBoard);
 
-            console.log(message);
+            let target = e.target;
 
-            if (message === undefined) {
-                return;
-            }
-
-            let displayedMsg;
-
-            if (message.hit === false) {
-                displayedMsg = 'is a miss';
-                renderHitOrMiss(e.target, 'miss');
-
-            } else if (message.hit === true) {
-                displayedMsg = 'is a hit';
-                renderHitOrMiss(e.target, 'hit');
-            }
-
-            if (message.hit === true && message.shipIsSunk === true) {
-                messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
-            } else {
-                messageDisplay.innerText = `${selection} ${displayedMsg}`;
-            }
+            renderMessage(selection, message, target);
             
             if (message.gameOver === true) {
                 console.log('player wins, game over');
             }
+
+            nextBtn.classList.remove('hide');
+
+            compGameboard.style.pointerEvents = "none";
         })
+
+        nextBtn.addEventListener('click', () => {
+            nextBtn.classList.add('hide');
+            compTurn();
+        })   
     }
 
     const compTurn = () => {
+        console.log(`start computer's turn phase`);
 
+        messageDisplay.innerText = `Computer's turn: please wait while an attack is processing...`;
+
+        let selection = computer.randomCoordinate();
+        let message = computer.playerAttack(selection, playerBoard);
+        let tiles = userGameboard.children;
+        let target;
+
+        Array.from(tiles).forEach((element) => {
+            if (selection.includes(element.dataset.coordinate)) {
+                target = element;
+            }
+        })
+
+        renderMessage(selection, message, target);
+
+        // create game over logic in a separate function
+        if (message.gameOver === true) {
+            console.log('computer wins, game over');
+        }
+    }
+
+    const renderMessage = (selection,message, target) => {
+        if (message === undefined) {
+            return;
+        }
+
+        let displayedMsg;
+
+        if (message.hit === false) {
+            displayedMsg = 'is a miss';
+            renderHitOrMiss(target, 'miss');
+        } else if (message.hit === true) {
+            displayedMsg = 'is a hit';
+            renderHitOrMiss(target, 'hit');
+        }
+
+        if (message.hit === true && message.shipIsSunk === true) {
+            messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
+        } else {
+            messageDisplay.innerText = `${selection} ${displayedMsg}`;
+        }
     }
 }
 
