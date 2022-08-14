@@ -11,9 +11,8 @@ import { renderShips, renderHitOrMiss } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// 1) create the logic for back and forth play between player and computer
-// 2) test for computer picking the same coordinate that has already been played
-// 3) create a timeout function for the computer display -- simulate the computer taking the time to think
+// 1) test for computer picking the same coordinate that has already been played
+// 2) create a timeout function for the computer display -- simulate the computer taking the time to think
 
 // module global variables
 let turn = 'player';
@@ -22,10 +21,13 @@ let turn = 'player';
 let messageDisplay = document.querySelector('.message-display');
 let startBtn = document.querySelector('.game-start');
 let resetBtn = document.querySelector('.reset-ships');
-let nextBtn = document.querySelector('.next-btn');
+let compTurnBtn = document.querySelector('.comp-turn');
+let userTurnBtn = document.querySelector('.user-turn');
 
 let userGameboard = document.querySelector('.user-tile-cont');
 let compGameboard = document.querySelector('.comp-tile-cont');
+
+
 
 const playGame = () => {
     // create players
@@ -62,11 +64,7 @@ const playGame = () => {
     const gameLoop = () => {
         console.log('let the game begin');
     
-        if (turn === 'player') {
-            playerTurn();
-        } else {
-            compTurn();
-        }
+        playerTurn();
     }
 
     const playerTurn = () => {
@@ -74,29 +72,6 @@ const playGame = () => {
 
         // make sure the user is able to click the compGameboard
         compGameboard.style.pointerEvents = "auto";
-
-        compGameboard.addEventListener('click', (e) => {
-            let selection = e.target.dataset.coordinate;
-
-            let message = player.playerAttack(selection, compBoard);
-
-            let target = e.target;
-
-            renderMessage(selection, message, target);
-            
-            if (message.gameOver === true) {
-                console.log('player wins, game over');
-            }
-
-            nextBtn.classList.remove('hide');
-
-            compGameboard.style.pointerEvents = "none";
-        })
-
-        nextBtn.addEventListener('click', () => {
-            nextBtn.classList.add('hide');
-            compTurn();
-        })   
     }
 
     const compTurn = () => {
@@ -121,10 +96,14 @@ const playGame = () => {
         if (message.gameOver === true) {
             console.log('computer wins, game over');
         }
+
+        turn = 'player';
+
+        userTurnBtn.classList.remove('hide');
     }
 
-    const renderMessage = (selection,message, target) => {
-        if (message === undefined) {
+    const renderMessage = (selection, message, target) => {
+        if (message.hit === undefined) {
             return;
         }
 
@@ -144,6 +123,37 @@ const playGame = () => {
             messageDisplay.innerText = `${selection} ${displayedMsg}`;
         }
     }
+
+    // Event Listeners
+
+    compTurnBtn.addEventListener('click', () => {
+        compTurnBtn.classList.add('hide');
+        compTurn();
+    })
+
+    compGameboard.addEventListener('click', (e) => {
+
+        let selection = e.target.dataset.coordinate;
+        let message = player.playerAttack(selection, compBoard);
+        let target = e.target;
+
+        renderMessage(selection, message, target);
+        
+        if (message.gameOver === true) {
+            console.log('player wins, game over');
+        }
+
+        compTurnBtn.classList.remove('hide');
+
+        compGameboard.style.pointerEvents = "none";
+
+        turn = 'computer';
+    })   
+
+    userTurnBtn.addEventListener('click', () => {
+        userTurnBtn.classList.add('hide');
+        playerTurn();
+    })  
 }
 
 export { playGame }
