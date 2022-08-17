@@ -11,8 +11,12 @@ import { renderShips, renderHitOrMiss } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// 1) test for computer picking the same coordinate that has already been played
-// 2) create a timeout function for the computer display -- simulate the computer taking the time to think
+// 1) create a timeout function for the computer display -- simulate the computer taking the time to think -- DONE
+// 2) setup the gameover logic
+// 3) place ship icons in the UI container
+// 4) when a corresponding ship is sunk on either gameboard, display that outcome on the ship icon
+// 5) place all 5 ships for each gameboard manually and run through a few test games
+// 6) workout the logic for both the user and computer placing ships on the board before the start of the game
 
 // module global variables
 let turn = 'player';
@@ -27,9 +31,10 @@ let userTurnBtn = document.querySelector('.user-turn');
 let userGameboard = document.querySelector('.user-tile-cont');
 let compGameboard = document.querySelector('.comp-tile-cont');
 
-
-
 const playGame = () => {
+
+    // disallow clicking the enemy gameboard until the start game button has been pressed
+    compGameboard.style.pointerEvents = "none";
     // create players
     const player = playerFactory('player');
     const computer = playerFactory('computer');
@@ -79,27 +84,38 @@ const playGame = () => {
 
         messageDisplay.innerText = `Computer's turn: please wait while an attack is processing...`;
 
-        let selection = computer.randomCoordinate();
-        let message = computer.playerAttack(selection, playerBoard);
-        let tiles = userGameboard.children;
-        let target;
+        setTimeout(() => {
+            let selection = computer.randomCoordinate();
+            let message = computer.playerAttack(selection, playerBoard);
 
-        Array.from(tiles).forEach((element) => {
-            if (selection.includes(element.dataset.coordinate)) {
-                target = element;
+            // this while loop is to ensure that the computer picks a new random coordinate
+            while (message === false) {
+                selection = computer.randomCoordinate();
+                message = computer.playerAttack(selection, playerBoard);
             }
-        })
 
-        renderMessage(selection, message, target);
+            let tiles = userGameboard.children;
+            let target;
 
-        // create game over logic in a separate function
-        if (message.gameOver === true) {
-            console.log('computer wins, game over');
-        }
+            Array.from(tiles).forEach((element) => {
+                if (selection.includes(element.dataset.coordinate)) {
+                    target = element;
+                }
+            })
 
-        turn = 'player';
+            renderMessage(selection, message, target);
 
-        userTurnBtn.classList.remove('hide');
+            // create game over logic in a separate function
+            if (message.gameOver === true) {
+                console.log('computer wins, game over');
+            }
+
+            turn = 'player';
+
+            userTurnBtn.classList.remove('hide');
+        }, 3000)
+
+        
     }
 
     const renderMessage = (selection, message, target) => {
