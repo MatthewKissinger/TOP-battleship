@@ -13,6 +13,7 @@ import { renderShips, renderHitOrMiss } from "./domRender.js";
 // TODO 
 // 1) create a timeout function for the computer display -- simulate the computer taking the time to think -- DONE
 // 2) setup the gameover logic
+//   ** create a clear function for rendering the gameboards -- it will activate once the rematch button is clicked
 // 3) place ship icons in the UI container
 // 4) when a corresponding ship is sunk on either gameboard, display that outcome on the ship icon
 // 5) place all 5 ships for each gameboard manually and run through a few test games
@@ -21,12 +22,21 @@ import { renderShips, renderHitOrMiss } from "./domRender.js";
 // module global variables
 let turn = 'player';
 
+// these will all be unassiged, that way when having a rematch, they can be referenced to undefined again to wipe them
+// add the player and user variables here -- unassigned
+// add the player and user boards here -- unassigned
+// add the player and comp ships here -- unassigned
+
 // DOM cache
 let messageDisplay = document.querySelector('.message-display');
 let startBtn = document.querySelector('.game-start');
 let resetBtn = document.querySelector('.reset-ships');
 let compTurnBtn = document.querySelector('.comp-turn');
 let userTurnBtn = document.querySelector('.user-turn');
+
+let gameOverCont = document.querySelector('.game-over-cont');
+let gameOverWinner = document.querySelector('.game-over-winner');
+let rematchBtn = document.querySelector('.rematch-btn');
 
 let userGameboard = document.querySelector('.user-tile-cont');
 let compGameboard = document.querySelector('.comp-tile-cont');
@@ -60,15 +70,51 @@ const playGame = () => {
     renderShips(playerBoard);
     renderShips(compBoard);
 
+    // Event Listeners
+
     startBtn.addEventListener('click', () => {
         startBtn.classList.add('hide');
         resetBtn.classList.add('hide');
         gameLoop();
     })
 
+    compTurnBtn.addEventListener('click', () => {
+        compTurnBtn.classList.add('hide');
+        compTurn();
+    })
+
+    userTurnBtn.addEventListener('click', () => {
+        userTurnBtn.classList.add('hide');
+        playerTurn();
+    }) 
+
+    compGameboard.addEventListener('click', (e) => {
+        let selection = e.target.dataset.coordinate;
+        let message = player.playerAttack(selection, compBoard);
+        let target = e.target;
+
+        renderMessage(selection, message, target);
+        
+        if (message.gameOver === true) {
+            gameOverFunc('player');
+            return;
+        }
+
+        compTurnBtn.classList.remove('hide');
+
+        compGameboard.style.pointerEvents = "none";
+
+        turn = 'computer';
+    }) 
+
+    rematchBtn.addEventListener('click', (e) => {
+        // clear rendering of hits and misses function -- build in the domRender module
+        // 
+        console.log('reset all variables and call playGame function again');
+    })
+
+    // start game function after clicking the startBtn or rematch button
     const gameLoop = () => {
-        console.log('let the game begin');
-    
         playerTurn();
     }
 
@@ -80,7 +126,6 @@ const playGame = () => {
     }
 
     const compTurn = () => {
-        console.log(`start computer's turn phase`);
 
         messageDisplay.innerText = `Computer's turn: please wait while an attack is processing...`;
 
@@ -107,69 +152,45 @@ const playGame = () => {
 
             // create game over logic in a separate function
             if (message.gameOver === true) {
-                console.log('computer wins, game over');
+                gameOverFunc('computer');
+                return;
             }
 
             turn = 'player';
 
             userTurnBtn.classList.remove('hide');
-        }, 3000)
+        }, 1000)
+    }
+}
 
-        
+const renderMessage = (selection, message, target) => {
+    if (message.hit === undefined) {
+        return;
     }
 
-    const renderMessage = (selection, message, target) => {
-        if (message.hit === undefined) {
-            return;
-        }
+    let displayedMsg;
 
-        let displayedMsg;
-
-        if (message.hit === false) {
-            displayedMsg = 'is a miss';
-            renderHitOrMiss(target, 'miss');
-        } else if (message.hit === true) {
-            displayedMsg = 'is a hit';
-            renderHitOrMiss(target, 'hit');
-        }
-
-        if (message.hit === true && message.shipIsSunk === true) {
-            messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
-        } else {
-            messageDisplay.innerText = `${selection} ${displayedMsg}`;
-        }
+    if (message.hit === false) {
+        displayedMsg = 'is a miss';
+        renderHitOrMiss(target, 'miss');
+    } else if (message.hit === true) {
+        displayedMsg = 'is a hit';
+        renderHitOrMiss(target, 'hit');
     }
 
-    // Event Listeners
+    if (message.hit === true && message.shipIsSunk === true) {
+        messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
+    } else {
+        messageDisplay.innerText = `${selection} ${displayedMsg}`;
+    }
+}
 
-    compTurnBtn.addEventListener('click', () => {
-        compTurnBtn.classList.add('hide');
-        compTurn();
-    })
+const gameOverFunc = (winner) => {
+    gameOverCont.classList.remove('hide');
 
-    compGameboard.addEventListener('click', (e) => {
+    gameOverWinner.innerText = `${winner} wins!`;
 
-        let selection = e.target.dataset.coordinate;
-        let message = player.playerAttack(selection, compBoard);
-        let target = e.target;
-
-        renderMessage(selection, message, target);
-        
-        if (message.gameOver === true) {
-            console.log('player wins, game over');
-        }
-
-        compTurnBtn.classList.remove('hide');
-
-        compGameboard.style.pointerEvents = "none";
-
-        turn = 'computer';
-    })   
-
-    userTurnBtn.addEventListener('click', () => {
-        userTurnBtn.classList.add('hide');
-        playerTurn();
-    })  
+    // research how to make only the gameOverCont clickable when it becomes visible
 }
 
 export { playGame }
