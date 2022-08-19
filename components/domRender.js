@@ -12,6 +12,14 @@ let compGameboardRowLabel = document.querySelector('.comp-gameboard-row-label');
 
 const renderDOM = () => {
 
+    // clear previous game's rendering
+    userGameboard.innerHTML = '';
+    userGameboardColLabel.innerHTML = '';
+    userGameboardRowLabel.innerHTML = '';
+    compGameboard.innerHTML = '';
+    compGameboardColLabel.innerHTML = '';
+    compGameboardRowLabel.innerHTML = '';
+
     // render gameboard tiles
     // update the coordinate letter and # combo to be placed in a data attribute
 

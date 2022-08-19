@@ -1,7 +1,7 @@
 import { playerFactory } from "./playerFactory.js";
 import { gameboardFactory } from "./gameboardFactory.js";
 import { shipFactory } from "./shipFactory.js";
-import { renderShips, renderHitOrMiss } from "./domRender.js";
+import { renderShips, renderHitOrMiss, renderDOM } from "./domRender.js";
 
 // 1 of each of the following ships
 // carrier - length 5
@@ -11,23 +11,24 @@ import { renderShips, renderHitOrMiss } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// 1) create a timeout function for the computer display -- simulate the computer taking the time to think -- DONE
-// 2) setup the gameover logic
-//   ** create a clear function for rendering the gameboards -- it will activate once the rematch button is clicked
-// 3) place ship icons in the UI container
-// 4) when a corresponding ship is sunk on either gameboard, display that outcome on the ship icon
-// 5) place all 5 ships for each gameboard manually and run through a few test games
-// 6) workout the logic for both the user and computer placing ships on the board before the start of the game
+// 1) place ship icons in the UI container
+// 2) when a corresponding ship is sunk on either gameboard, display that outcome on the ship icon
+// 3) workout the logic for both the user and computer placing ships on the board before the start of the game
 
-// module global variables
-let turn = 'player';
+// *** GLOBAL VARIABLES
+let player;
+let computer;
 
-// these will all be unassiged, that way when having a rematch, they can be referenced to undefined again to wipe them
-// add the player and user variables here -- unassigned
-// add the player and user boards here -- unassigned
-// add the player and comp ships here -- unassigned
+let playerBoard;
+let compBoard;
 
-// DOM cache
+let destroyer;
+let submarine;
+
+let compDestroyer;
+let compSubmarine;
+
+// *** DOM CACHE ***
 let messageDisplay = document.querySelector('.message-display');
 let startBtn = document.querySelector('.game-start');
 let resetBtn = document.querySelector('.reset-ships');
@@ -46,22 +47,22 @@ const playGame = () => {
     // disallow clicking the enemy gameboard until the start game button has been pressed
     compGameboard.style.pointerEvents = "none";
     // create players
-    const player = playerFactory('player');
-    const computer = playerFactory('computer');
+    player = playerFactory('player');
+    computer = playerFactory('computer');
 
     // create the boards for each participant
-    const playerBoard = gameboardFactory(player.name);
-    const compBoard = gameboardFactory(computer.name);
+    playerBoard = gameboardFactory(player.name);
+    compBoard = gameboardFactory(computer.name);
 
     // player ship placement phase
-    let destroyer = shipFactory('destroyer', 2, ['a2', 'a3']);
-    let submarine = shipFactory('submarine', 3, ['b4', 'c4','d4']);
+    destroyer = shipFactory('destroyer', 2, ['a2', 'a3']);
+    submarine = shipFactory('submarine', 3, ['b4', 'c4','d4']);
 
     playerBoard.placeShip(destroyer);
     playerBoard.placeShip(submarine);
 
-    let compDestroyer = shipFactory('destroyer', 2, ['c1', 'd1']);
-    let compSubmarine = shipFactory('submarine', 3, ['e5', 'e6', 'e7']);
+    compDestroyer = shipFactory('destroyer', 2, ['c1', 'd1']);
+    compSubmarine = shipFactory('submarine', 3, ['e5', 'e6', 'e7']);
 
     compBoard.placeShip(compDestroyer);
     compBoard.placeShip(compSubmarine);
@@ -70,7 +71,7 @@ const playGame = () => {
     renderShips(playerBoard);
     renderShips(compBoard);
 
-    // Event Listeners
+    // *** EVENT LISTENERS ***
 
     startBtn.addEventListener('click', () => {
         startBtn.classList.add('hide');
@@ -78,39 +79,30 @@ const playGame = () => {
         gameLoop();
     })
 
-    compTurnBtn.addEventListener('click', () => {
-        compTurnBtn.classList.add('hide');
-        compTurn();
-    })
+    compTurnBtn.addEventListener('click', onCompTurnBtnClick, false);
 
     userTurnBtn.addEventListener('click', () => {
         userTurnBtn.classList.add('hide');
         playerTurn();
     }) 
 
-    compGameboard.addEventListener('click', (e) => {
-        let selection = e.target.dataset.coordinate;
-        let message = player.playerAttack(selection, compBoard);
-        let target = e.target;
-
-        renderMessage(selection, message, target);
-        
-        if (message.gameOver === true) {
-            gameOverFunc('player');
-            return;
-        }
-
-        compTurnBtn.classList.remove('hide');
-
-        compGameboard.style.pointerEvents = "none";
-
-        turn = 'computer';
-    }) 
+    compGameboard.addEventListener('click', onCompGameboardClick, false); 
 
     rematchBtn.addEventListener('click', (e) => {
-        // clear rendering of hits and misses function -- build in the domRender module
-        // 
         console.log('reset all variables and call playGame function again');
+        renderDOM();
+        resetVariables();
+
+        // remove all event listeners that duplicate
+        compTurnBtn.removeEventListener('click', onCompTurnBtnClick, false);
+        compGameboard.removeEventListener('click', onCompGameboardClick, false);
+
+        playGame();
+        gameOverCont.classList.add('hide');
+        resetBtn.classList.remove('hide');
+        startBtn.classList.remove('hide');
+
+        messageDisplay.innerText = `Press Start to Begin the Game`;
     })
 
     // start game function after clicking the startBtn or rematch button
@@ -123,44 +115,7 @@ const playGame = () => {
 
         // make sure the user is able to click the compGameboard
         compGameboard.style.pointerEvents = "auto";
-    }
-
-    const compTurn = () => {
-
-        messageDisplay.innerText = `Computer's turn: please wait while an attack is processing...`;
-
-        setTimeout(() => {
-            let selection = computer.randomCoordinate();
-            let message = computer.playerAttack(selection, playerBoard);
-
-            // this while loop is to ensure that the computer picks a new random coordinate
-            while (message === false) {
-                selection = computer.randomCoordinate();
-                message = computer.playerAttack(selection, playerBoard);
-            }
-
-            let tiles = userGameboard.children;
-            let target;
-
-            Array.from(tiles).forEach((element) => {
-                if (selection.includes(element.dataset.coordinate)) {
-                    target = element;
-                }
-            })
-
-            renderMessage(selection, message, target);
-
-            // create game over logic in a separate function
-            if (message.gameOver === true) {
-                gameOverFunc('computer');
-                return;
-            }
-
-            turn = 'player';
-
-            userTurnBtn.classList.remove('hide');
-        }, 1000)
-    }
+    }  
 }
 
 const renderMessage = (selection, message, target) => {
@@ -185,12 +140,89 @@ const renderMessage = (selection, message, target) => {
     }
 }
 
+// *** GLOBAL FUNCTIONS ***
+
+const compTurn = () => {
+
+    messageDisplay.innerText = `Computer's turn: please wait while an attack is processing...`;
+
+    setTimeout(() => {
+        let selection = computer.randomCoordinate();
+        let message = computer.playerAttack(selection, playerBoard);
+
+        // this while loop is to ensure that the computer picks a new random coordinate
+        while (message === false) {
+            selection = computer.randomCoordinate();
+            message = computer.playerAttack(selection, playerBoard);
+        }
+
+        let tiles = userGameboard.children;
+        let target;
+
+        Array.from(tiles).forEach((element) => {
+            if (selection.includes(element.dataset.coordinate)) {
+                target = element;
+            }
+        })
+
+        renderMessage(selection, message, target);
+
+        // create game over logic in a separate function
+        if (message.gameOver === true) {
+            gameOverFunc('computer');
+            return;
+        }
+
+        turn = 'player';
+
+        userTurnBtn.classList.remove('hide');
+    }, 1000)
+}
+
+const onCompTurnBtnClick = () => {
+    compTurnBtn.classList.add('hide');
+    compTurn();
+}
+
+const onCompGameboardClick = (e) => {
+    let selection = e.target.dataset.coordinate;
+    let message = player.playerAttack(selection, compBoard);
+    let target = e.target;
+
+    renderMessage(selection, message, target);
+    
+    if (message.gameOver === true) {
+        gameOverFunc('player');
+        return;
+    }
+
+    compTurnBtn.classList.remove('hide');
+
+    compGameboard.style.pointerEvents = "none";
+
+    turn = 'computer';
+}
+
 const gameOverFunc = (winner) => {
+    compGameboard.style.pointerEvents = "none";
     gameOverCont.classList.remove('hide');
 
     gameOverWinner.innerText = `${winner} wins!`;
 
-    // research how to make only the gameOverCont clickable when it becomes visible
+}
+
+const resetVariables = () => {
+    player = undefined;
+    computer = undefined;
+
+    playerBoard = undefined;
+    compBoard = undefined;
+
+    destroyer = undefined;
+    submarine = undefined;
+
+    compDestroyer = undefined;
+    compSubmarine = undefined;
 }
 
 export { playGame }
