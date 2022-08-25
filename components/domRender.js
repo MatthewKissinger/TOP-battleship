@@ -113,4 +113,11 @@ const renderHitOrMiss = (targetDiv, hitValue) => {
     }
 }
 
-export { renderDOM, renderShips, renderHitOrMiss }
+const renderShipsSunkUI = (shipArray) => {
+    console.log(shipArray);
+    shipArray.forEach((ship) => {
+        console.log(ship.sunk);
+    })
+}
+
+export { renderDOM, renderShips, renderHitOrMiss, renderShipsSunkUI }

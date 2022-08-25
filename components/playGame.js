@@ -1,7 +1,7 @@
 import { playerFactory } from "./playerFactory.js";
 import { gameboardFactory } from "./gameboardFactory.js";
 import { shipFactory } from "./shipFactory.js";
-import { renderShips, renderHitOrMiss, renderDOM } from "./domRender.js";
+import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI } from "./domRender.js";
 
 // 1 of each of the following ships
 // carrier - length 5
@@ -11,9 +11,8 @@ import { renderShips, renderHitOrMiss, renderDOM } from "./domRender.js";
 // destroyer - length 2
 
 // TODO 
-// 1) place ship icons in the UI container
-// 2) when a corresponding ship is sunk on either gameboard, display that outcome on the ship icon
-// 3) workout the logic for both the user and computer placing ships on the board before the start of the game
+// 1) when a corresponding ship is sunk on either gameboard, display that outcome on the ship icon
+// 2) workout the logic for both the user and computer placing ships on the board before the start of the game
 
 // *** GLOBAL VARIABLES
 let player;
@@ -55,14 +54,14 @@ const playGame = () => {
     compBoard = gameboardFactory(computer.name);
 
     // player ship placement phase
-    destroyer = shipFactory('destroyer', 2, ['a2', 'a3']);
-    submarine = shipFactory('submarine', 3, ['b4', 'c4','d4']);
+    destroyer = shipFactory('Destroyer', 2, ['a2', 'a3']);
+    submarine = shipFactory('Submarine', 3, ['b4', 'c4','d4']);
 
     playerBoard.placeShip(destroyer);
     playerBoard.placeShip(submarine);
 
-    compDestroyer = shipFactory('destroyer', 2, ['c1', 'd1']);
-    compSubmarine = shipFactory('submarine', 3, ['e5', 'e6', 'e7']);
+    compDestroyer = shipFactory('Destroyer', 2, ['c1', 'd1']);
+    compSubmarine = shipFactory('Submarine', 3, ['e5', 'e6', 'e7']);
 
     compBoard.placeShip(compDestroyer);
     compBoard.placeShip(compSubmarine);
@@ -135,6 +134,7 @@ const renderMessage = (selection, message, target) => {
 
     if (message.hit === true && message.shipIsSunk === true) {
         messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
+        renderShipsSunkUI(compBoard.gameboard.ships);
     } else {
         messageDisplay.innerText = `${selection} ${displayedMsg}`;
     }
@@ -173,8 +173,6 @@ const compTurn = () => {
             return;
         }
 
-        turn = 'player';
-
         userTurnBtn.classList.remove('hide');
     }, 1000)
 }
@@ -199,8 +197,6 @@ const onCompGameboardClick = (e) => {
     compTurnBtn.classList.remove('hide');
 
     compGameboard.style.pointerEvents = "none";
-
-    turn = 'computer';
 }
 
 const gameOverFunc = (winner) => {
