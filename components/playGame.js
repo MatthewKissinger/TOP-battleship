@@ -117,7 +117,7 @@ const playGame = () => {
     }  
 }
 
-const renderMessage = (selection, message, target) => {
+const renderMessage = (selection, message, target, board) => {
     if (message.hit === undefined) {
         return;
     }
@@ -133,8 +133,12 @@ const renderMessage = (selection, message, target) => {
     }
 
     if (message.hit === true && message.shipIsSunk === true) {
+
+        // place a ternary expression here to reflect which board is being hit from the board argument provided
         messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
-        renderShipsSunkUI(compBoard.gameboard.ships);
+
+        
+        renderShipsSunkUI(compBoard.gameboard.ships, board);
     } else {
         messageDisplay.innerText = `${selection} ${displayedMsg}`;
     }
@@ -165,7 +169,7 @@ const compTurn = () => {
             }
         })
 
-        renderMessage(selection, message, target);
+        renderMessage(selection, message, target, 'player');
 
         // create game over logic in a separate function
         if (message.gameOver === true) {
@@ -187,7 +191,7 @@ const onCompGameboardClick = (e) => {
     let message = player.playerAttack(selection, compBoard);
     let target = e.target;
 
-    renderMessage(selection, message, target);
+    renderMessage(selection, message, target, 'comp');
     
     if (message.gameOver === true) {
         gameOverFunc('player');

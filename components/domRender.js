@@ -5,10 +5,12 @@
 let userGameboard = document.querySelector('.user-tile-cont');
 let userGameboardColLabel = document.querySelector('.user-gameboard-col-label');
 let userGameboardRowLabel = document.querySelector('.user-gameboard-row-label');
+let userShipIconCont = document.querySelector('.user-ship-cont');
 
 let compGameboard = document.querySelector('.comp-tile-cont');
 let compGameboardColLabel = document.querySelector('.comp-gameboard-col-label');
 let compGameboardRowLabel = document.querySelector('.comp-gameboard-row-label');
+let compShipIconCont = document.querySelector('.comp-ship-cont');
 
 const renderDOM = () => {
 
@@ -113,10 +115,25 @@ const renderHitOrMiss = (targetDiv, hitValue) => {
     }
 }
 
-const renderShipsSunkUI = (shipArray) => {
+const renderShipsSunkUI = (shipArray, board) => {
     console.log(shipArray);
+    let shipIcons;
+
+    if (board === 'comp') {
+        shipIcons = compShipIconCont.children;
+    } else {
+        shipIcons = userShipIconCont.children;
+    }
+    
+
     shipArray.forEach((ship) => {
-        console.log(ship.sunk);
+        if (ship.sunk === true) {
+            [...shipIcons].forEach((element) => {
+                if (ship.shipName === element.innerText) {
+                    element.style.color = 'red';
+                }
+            })
+        }
     })
 }
 
