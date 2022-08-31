@@ -33,6 +33,7 @@ let shipsPlaced = false;
 let messageDisplay = document.querySelector('.message-display');
 let startBtn = document.querySelector('.game-start');
 let resetBtn = document.querySelector('.reset-ships');
+let nextBtn = document.querySelector('.next-ship');
 let compTurnBtn = document.querySelector('.comp-turn');
 let userTurnBtn = document.querySelector('.user-turn');
 
@@ -56,11 +57,11 @@ const playGame = () => {
     compBoard = gameboardFactory(computer.name);
 
     // player ship placement phase
-    destroyer = shipFactory('Destroyer', 2, ['a2', 'a3']);
-    submarine = shipFactory('Submarine', 3, ['b4', 'c4','d4']);
+    // destroyer = shipFactory('Destroyer', 2, ['a2', 'a3']);
+    // submarine = shipFactory('Submarine', 3, ['b4', 'c4','d4']);
 
-    playerBoard.placeShip(destroyer);
-    playerBoard.placeShip(submarine);
+    // playerBoard.placeShip(destroyer);
+    // playerBoard.placeShip(submarine);
 
     compDestroyer = shipFactory('Destroyer', 2, ['c1', 'd1']);
     compSubmarine = shipFactory('Submarine', 3, ['e5', 'e6', 'e7']);
@@ -69,10 +70,20 @@ const playGame = () => {
     compBoard.placeShip(compSubmarine);
 
     // renders the ships placed on the gameboard
-    renderShips(playerBoard);
+    // renderShips(playerBoard);
     renderShips(compBoard);
 
     // *** EVENT LISTENERS ***
+
+    resetBtn.addEventListener('click', () => {
+        console.log('run the reset ship location function');
+    })
+
+    nextBtn.addEventListener('click', () => {
+        console.log('move on to the next ship to be placed');
+    })
+
+    userGameboard.addEventListener('click', placeUserShips, false);
 
     startBtn.addEventListener('click', () => {
         startBtn.classList.add('hide');
@@ -87,12 +98,8 @@ const playGame = () => {
         playerTurn();
     }) 
 
-    userGameboard.addEventListener('click', placeUserShips, false);
-
-    if (shipsPlaced === true) {
-        compGameboard.addEventListener('click', onCompGameboardClick, false); 
-    }
-
+    compGameboard.addEventListener('click', onCompGameboardClick, false); 
+    
     rematchBtn.addEventListener('click', (e) => {
         console.log('reset all variables and call playGame function again');
         renderDOM();
@@ -236,7 +243,32 @@ const resetVariables = () => {
 }
 
 const placeUserShips = (e) => {
-    console.log(e.target)
+    // stop click events on user gameboard
+
+    let orientation = 'horizontal';
+    let length;
+
+    let coordinates = [];
+    let targetCoordinate = e.target.dataset.coordinate;
+    let targetCoordinateArray = targetCoordinate.split('');
+    let targetCoordinateLetter = targetCoordinateArray[0];
+    let targetCoordinateNum = targetCoordinateArray[1];
+
+    console.log(targetCoordinateLetter);
+    console.log(targetCoordinateNum);
+
+    if (playerBoard.gameboard.ships.length === 0) {
+        length = 2;
+        if (orientation === 'horizontal') {
+            for (let i = 1; i < length; i++) {
+                
+            }
+        }
+    }
+
+    // destroyer = shipFactory('Destroyer', 2, ['a2', 'a3']);
+    // playerBoard.placeShip(destroyer);
+    // renderShips(playerBoard);
 }
 
 export { playGame }
