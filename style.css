@@ -4,9 +4,7 @@
     box-sizing: border-box;
 }
 
-/* variables */
-
-
+/* variables for styling */
 
 body {
     height: 100vh;
@@ -31,7 +29,9 @@ body {
     border: 1px solid rgb(204, 193, 204);
     border-radius: 10px;
     height: 8%;
-    width: 40%;
+    width: 50%;
+    text-align: center;
+    padding: 1rem;
     margin: 0 auto;
 }
 

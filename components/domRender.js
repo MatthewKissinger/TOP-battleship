@@ -137,4 +137,17 @@ const renderShipsSunkUI = (shipArray, board) => {
     })
 }
 
-export { renderDOM, renderShips, renderHitOrMiss, renderShipsSunkUI }
+const resetShipNamesUI = () => {
+    let userShipIcons = userShipIconCont.children;
+    let compShipIcons = compShipIconCont.children;
+
+    [...userShipIcons].forEach((element) => {
+        element.style.color = 'black';
+    });
+
+    [...compShipIcons].forEach((element) => {
+        element.style.color = 'black';
+    });
+}
+
+export { renderDOM, renderShips, renderHitOrMiss, renderShipsSunkUI, resetShipNamesUI }

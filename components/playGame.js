@@ -1,7 +1,7 @@
 import { playerFactory } from "./playerFactory.js";
 import { gameboardFactory } from "./gameboardFactory.js";
 import { shipFactory } from "./shipFactory.js";
-import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI } from "./domRender.js";
+import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI, resetShipNamesUI } from "./domRender.js";
 
 // 1 of each of the following ships
 // carrier - length 5
@@ -11,8 +11,7 @@ import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI } from "./do
 // destroyer - length 2
 
 // TODO 
-// 1) when a corresponding ship is sunk on either gameboard, display that outcome on the ship icon
-// 2) workout the logic for both the user and computer placing ships on the board before the start of the game
+// 1) workout the logic for both the user and computer placing ships on the board before the start of the game
 
 // *** GLOBAL VARIABLES
 let player;
@@ -26,6 +25,9 @@ let submarine;
 
 let compDestroyer;
 let compSubmarine;
+
+// global variable -- change to true once all of the ships have been placed, this will trigger the compBoard click event listener for the game
+let shipsPlaced = false;
 
 // *** DOM CACHE ***
 let messageDisplay = document.querySelector('.message-display');
@@ -85,11 +87,16 @@ const playGame = () => {
         playerTurn();
     }) 
 
-    compGameboard.addEventListener('click', onCompGameboardClick, false); 
+    userGameboard.addEventListener('click', placeUserShips, false);
+
+    if (shipsPlaced === true) {
+        compGameboard.addEventListener('click', onCompGameboardClick, false); 
+    }
 
     rematchBtn.addEventListener('click', (e) => {
         console.log('reset all variables and call playGame function again');
         renderDOM();
+        resetShipNamesUI();
         resetVariables();
 
         // remove all event listeners that duplicate
@@ -133,11 +140,14 @@ const renderMessage = (selection, message, target, board) => {
     }
 
     if (message.hit === true && message.shipIsSunk === true) {
+        let boardName;
+        if (board === 'comp') {
+            boardName = 'computer';
+        } else {
+            boardName = 'user';
+        }
 
-        // place a ternary expression here to reflect which board is being hit from the board argument provided
-        messageDisplay.innerText = `${selection} ${displayedMsg}, computer's ${message.sunkShipName} is sunk`;
-
-        
+        messageDisplay.innerText = `${selection} ${displayedMsg}, ${boardName}'s ${message.sunkShipName} is sunk`;
         renderShipsSunkUI(compBoard.gameboard.ships, board);
     } else {
         messageDisplay.innerText = `${selection} ${displayedMsg}`;
@@ -223,6 +233,10 @@ const resetVariables = () => {
 
     compDestroyer = undefined;
     compSubmarine = undefined;
+}
+
+const placeUserShips = (e) => {
+    console.log(e.target)
 }
 
 export { playGame }
