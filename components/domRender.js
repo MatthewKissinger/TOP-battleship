@@ -94,6 +94,8 @@ const renderShips = (gameBoard) => {
     Array.from(tiles).forEach((element) => {
       if (shipCoordinates.includes(element.dataset.coordinate)) {
         element.style.backgroundColor = 'lightgray';
+      } else {
+        element.style.backgroundColor = 'rgb(0, 179, 255)';
       }
     })
 }

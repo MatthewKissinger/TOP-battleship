@@ -28,6 +28,8 @@ let compSubmarine;
 
 // global variable -- change to true once all of the ships have been placed, this will trigger the compBoard click event listener for the game
 let shipsPlaced = false;
+let placeShipsCounter = 1;
+let orientation = 'horizontal';
 
 // *** DOM CACHE ***
 let messageDisplay = document.querySelector('.message-display');
@@ -244,8 +246,8 @@ const resetVariables = () => {
 
 const placeUserShips = (e) => {
     // stop click events on user gameboard
+    // userGameboard.style.pointerEvents = 'none';
 
-    let orientation = 'horizontal';
     let length;
 
     let coordinates = [];
@@ -254,21 +256,43 @@ const placeUserShips = (e) => {
     let targetCoordinateLetter = targetCoordinateArray[0];
     let targetCoordinateNum = targetCoordinateArray[1];
 
-    console.log(targetCoordinateLetter);
-    console.log(targetCoordinateNum);
+    coordinates.push(targetCoordinate);
 
-    if (playerBoard.gameboard.ships.length === 0) {
+    console.log(playerBoard.gameboard.ships);
+
+    if (placeShipsCounter === 1) {
         length = 2;
+        playerBoard.gameboard.ships.splice((placeShipsCounter - 1), 1);
+        renderShips(playerBoard);
+
         if (orientation === 'horizontal') {
             for (let i = 1; i < length; i++) {
-                
+                let newCoordinate = targetCoordinateLetter + (parseInt(targetCoordinateNum) + i);
+                coordinates.push(newCoordinate);
             }
+            destroyer = shipFactory('Destroyer', 2, coordinates);
+            playerBoard.placeShip(destroyer);
+            renderShips(playerBoard);
         }
     }
 
-    // destroyer = shipFactory('Destroyer', 2, ['a2', 'a3']);
-    // playerBoard.placeShip(destroyer);
-    // renderShips(playerBoard);
+    // changes the orientation
+    // explore adding a button to change the orientation on click
+    // let selectedTile = e.target;
+    // selectedTile.addEventListener('click', changeOrientation(orientation), false);
+
+    console.log(coordinates);
+}
+
+const changeOrientation = (direction) => {
+    console.log('change the orientation of the ship placement');
+        if (direction === 'horizontal') {
+            orientation = 'vertical';
+        } else {
+            orientation = 'horizontal';
+        }
+        
+        console.log(orientation);
 }
 
 export { playGame }
