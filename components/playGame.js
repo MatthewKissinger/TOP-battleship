@@ -59,10 +59,8 @@ const playGame = () => {
     compBoard = gameboardFactory(computer.name);
 
     // player ship placement phase
-    // destroyer = shipFactory('Destroyer', 2, ['a2', 'a3']);
     // submarine = shipFactory('Submarine', 3, ['b4', 'c4','d4']);
 
-    // playerBoard.placeShip(destroyer);
     // playerBoard.placeShip(submarine);
 
     compDestroyer = shipFactory('Destroyer', 2, ['c1', 'd1']);
@@ -71,8 +69,6 @@ const playGame = () => {
     compBoard.placeShip(compDestroyer);
     compBoard.placeShip(compSubmarine);
 
-    // renders the ships placed on the gameboard
-    // renderShips(playerBoard);
     renderShips(compBoard);
 
     // *** EVENT LISTENERS ***
@@ -250,11 +246,17 @@ const placeUserShips = (e) => {
 
     let length;
 
+    let currentTile = e.target;
+
     let coordinates = [];
     let targetCoordinate = e.target.dataset.coordinate;
     let targetCoordinateArray = targetCoordinate.split('');
     let targetCoordinateLetter = targetCoordinateArray[0];
     let targetCoordinateNum = targetCoordinateArray[1];
+
+    if (targetCoordinateArray[2] != undefined) {
+        targetCoordinateNum = targetCoordinateArray[1] + targetCoordinateArray[2];
+    }
 
     coordinates.push(targetCoordinate);
 
@@ -266,6 +268,13 @@ const placeUserShips = (e) => {
         renderShips(playerBoard);
 
         if (orientation === 'horizontal') {
+            if (parseInt(targetCoordinateNum) === 10) {
+                messageDisplay.innerText = 'Invalid tile. Make another selection';
+                return;
+            } else {
+                messageDisplay.innerText = 'Press next to confirm selection';
+            }
+
             for (let i = 1; i < length; i++) {
                 let newCoordinate = targetCoordinateLetter + (parseInt(targetCoordinateNum) + i);
                 coordinates.push(newCoordinate);
@@ -275,6 +284,9 @@ const placeUserShips = (e) => {
             renderShips(playerBoard);
         }
     }
+
+    console.log(currentTile);
+    console.log(orientation);
 
     // changes the orientation
     // explore adding a button to change the orientation on click
