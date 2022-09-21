@@ -29,12 +29,14 @@ let compSubmarine;
 // global variable -- change to true once all of the ships have been placed, this will trigger the compBoard click event listener for the game
 let shipsPlaced = false;
 let placeShipsCounter = 1;
+let currentTile = '';
 let orientation = 'horizontal';
 
 // *** DOM CACHE ***
 let messageDisplay = document.querySelector('.message-display');
 let startBtn = document.querySelector('.game-start');
 let resetBtn = document.querySelector('.reset-ships');
+let shipDirectionBtn = document.querySelector('.ship-direction');
 let nextBtn = document.querySelector('.next-ship');
 let compTurnBtn = document.querySelector('.comp-turn');
 let userTurnBtn = document.querySelector('.user-turn');
@@ -75,11 +77,15 @@ const playGame = () => {
 
     resetBtn.addEventListener('click', () => {
         console.log('run the reset ship location function');
-    })
+    });
+
+    shipDirectionBtn.addEventListener('click', () => {
+        changeOrientation(orientation);
+    });
 
     nextBtn.addEventListener('click', () => {
         console.log('move on to the next ship to be placed');
-    })
+    });
 
     userGameboard.addEventListener('click', placeUserShips, false);
 
@@ -87,14 +93,14 @@ const playGame = () => {
         startBtn.classList.add('hide');
         resetBtn.classList.add('hide');
         gameLoop();
-    })
+    });
 
     compTurnBtn.addEventListener('click', onCompTurnBtnClick, false);
 
     userTurnBtn.addEventListener('click', () => {
         userTurnBtn.classList.add('hide');
         playerTurn();
-    }) 
+    }); 
 
     compGameboard.addEventListener('click', onCompGameboardClick, false); 
     
@@ -246,17 +252,16 @@ const placeUserShips = (e) => {
 
     let length;
 
-    let currentTile = e.target;
+    currentTile = e.target;
+
+    console.log(currentTile);
 
     let coordinates = [];
     let targetCoordinate = e.target.dataset.coordinate;
-    let targetCoordinateArray = targetCoordinate.split('');
-    let targetCoordinateLetter = targetCoordinateArray[0];
-    let targetCoordinateNum = targetCoordinateArray[1];
+    let targetCoordinateLetter = targetCoordinate.slice(0, 1);
+    let targetCoordinateNum = targetCoordinate.slice(1, targetCoordinate.length);
 
-    if (targetCoordinateArray[2] != undefined) {
-        targetCoordinateNum = targetCoordinateArray[1] + targetCoordinateArray[2];
-    }
+    console.log(targetCoordinateNum);
 
     coordinates.push(targetCoordinate);
 
@@ -282,11 +287,11 @@ const placeUserShips = (e) => {
             destroyer = shipFactory('Destroyer', 2, coordinates);
             playerBoard.placeShip(destroyer);
             renderShips(playerBoard);
+        } else if (orientation === 'vertical') {
+            
         }
-    }
 
-    console.log(currentTile);
-    console.log(orientation);
+    }
 
     // changes the orientation
     // explore adding a button to change the orientation on click
@@ -297,11 +302,12 @@ const placeUserShips = (e) => {
 }
 
 const changeOrientation = (direction) => {
-    console.log('change the orientation of the ship placement');
         if (direction === 'horizontal') {
             orientation = 'vertical';
+            shipDirectionBtn.innerText = 'vertical';
         } else {
             orientation = 'horizontal';
+            shipDirectionBtn.innerText = 'horizontal';
         }
         
         console.log(orientation);
