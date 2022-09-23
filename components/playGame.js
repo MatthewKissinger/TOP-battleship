@@ -29,7 +29,6 @@ let compSubmarine;
 // global variable -- change to true once all of the ships have been placed, this will trigger the compBoard click event listener for the game
 let shipsPlaced = false;
 let placeShipsCounter = 1;
-let currentTile = '';
 let orientation = 'horizontal';
 
 // *** DOM CACHE ***
@@ -85,6 +84,8 @@ const playGame = () => {
 
     nextBtn.addEventListener('click', () => {
         console.log('move on to the next ship to be placed');
+        // update the placeShipsCounter variable 
+        // update the message display
     });
 
     userGameboard.addEventListener('click', placeUserShips, false);
@@ -252,28 +253,26 @@ const placeUserShips = (e) => {
 
     let length;
 
-    currentTile = e.target;
-
-    console.log(currentTile);
-
     let coordinates = [];
     let targetCoordinate = e.target.dataset.coordinate;
     let targetCoordinateLetter = targetCoordinate.slice(0, 1);
     let targetCoordinateNum = targetCoordinate.slice(1, targetCoordinate.length);
 
-    console.log(targetCoordinateNum);
-
     coordinates.push(targetCoordinate);
 
     console.log(playerBoard.gameboard.ships);
 
+    // separate into a function
+    // receive arg of placeShips Counter
+    // that will determine the length variable
+
     if (placeShipsCounter === 1) {
-        length = 2;
+        length = placeShipsCounter + 1;
         playerBoard.gameboard.ships.splice((placeShipsCounter - 1), 1);
         renderShips(playerBoard);
 
         if (orientation === 'horizontal') {
-            if (parseInt(targetCoordinateNum) === 10) {
+            if ((parseInt(targetCoordinateNum) + (length - 1)) > 10) {
                 messageDisplay.innerText = 'Invalid tile. Make another selection';
                 return;
             } else {
@@ -284,21 +283,36 @@ const placeUserShips = (e) => {
                 let newCoordinate = targetCoordinateLetter + (parseInt(targetCoordinateNum) + i);
                 coordinates.push(newCoordinate);
             }
-            destroyer = shipFactory('Destroyer', 2, coordinates);
+
+            // separate into a function -- use a switch statement for placeShipsCounter variable to get the destroyer and 'Destroyer' variables
+            // input args will be placeshipsCounter, length, coordinates
+            destroyer = shipFactory('Destroyer', length, coordinates);
             playerBoard.placeShip(destroyer);
             renderShips(playerBoard);
+            // 
+
         } else if (orientation === 'vertical') {
-            
+            let letterCharCode = targetCoordinateLetter.charCodeAt(0);
+            console.log(letterCharCode);
+            if ((parseInt(letterCharCode) + (length - 1)) > 106) {
+                messageDisplay.innerText = 'Invalid tile. Make another selection';
+                return;
+            } else {
+                messageDisplay.innerText = 'Press next to confirm selection';
+            }
+
+            for (let i = 1; i < length; i++) {
+                let newCoordinate = String.fromCharCode(letterCharCode + i) + targetCoordinateNum;
+                coordinates.push(newCoordinate);
+            }
+
+            // separate into a function
+            destroyer = shipFactory('Destroyer', length, coordinates);
+            playerBoard.placeShip(destroyer);
+            renderShips(playerBoard);
+            //
         }
-
     }
-
-    // changes the orientation
-    // explore adding a button to change the orientation on click
-    // let selectedTile = e.target;
-    // selectedTile.addEventListener('click', changeOrientation(orientation), false);
-
-    console.log(coordinates);
 }
 
 const changeOrientation = (direction) => {
@@ -309,8 +323,6 @@ const changeOrientation = (direction) => {
             orientation = 'horizontal';
             shipDirectionBtn.innerText = 'horizontal';
         }
-        
-        console.log(orientation);
 }
 
 export { playGame }
