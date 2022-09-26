@@ -3,6 +3,10 @@ import { gameboardFactory } from "./gameboardFactory.js";
 import { shipFactory } from "./shipFactory.js";
 import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI, resetShipNamesUI } from "./domRender.js";
 
+// TODO LIST
+// *** randomly generate the computer ship placements
+//    ** trigger placeShips function for comp at click of start button
+
 // *** GLOBAL VARIABLES
 let player;
 let computer;
@@ -21,9 +25,9 @@ let compBattleship;
 let compCarrier;
 
 // global variable -- change to true once all of the ships have been placed, this will trigger the compBoard click event listener for the game
-let shipsPlaced = false;
 let placeShipsCounter = 1;
 let orientation = 'horizontal';
+let overlap = false;
 
 // used to test whether the user can proceed to placing the next ship by pressing the next button
 let validShipTiles = false;
@@ -56,13 +60,13 @@ const playGame = () => {
     playerBoard = gameboardFactory(player.name);
     compBoard = gameboardFactory(computer.name);
 
-    compDestroyer = shipFactory('Destroyer', 2, ['c1', 'd1']);
-    compSubmarine = shipFactory('Submarine', 3, ['e5', 'e6', 'e7']);
+    // compDestroyer = shipFactory('Destroyer', 2, ['c1', 'd1']);
+    // compSubmarine = shipFactory('Submarine', 3, ['e5', 'e6', 'e7']);
 
-    compBoard.placeShip(compDestroyer);
-    compBoard.placeShip(compSubmarine);
+    // compBoard.placeShip(compDestroyer);
+    // compBoard.placeShip(compSubmarine);
 
-    renderShips(compBoard);
+    // renderShips(compBoard);
 
     // *** EVENT LISTENERS ***
 
@@ -78,7 +82,6 @@ const playGame = () => {
         console.log(validShipTiles);
         if (validShipTiles === true) {
             if (validShipTiles === true && placeShipsCounter === 4) {
-                console.log('this is the last ship');
                 shipDirectionBtn.classList.add('hide');
                 nextBtn.classList.add('hide');
                 startBtn.classList.remove('hide');
@@ -96,6 +99,11 @@ const playGame = () => {
     userGameboard.addEventListener('click', () => {placeShips(event, playerBoard)}, false);
 
     startBtn.addEventListener('click', () => {
+        // stop click events on user gameboard
+        userGameboard.style.pointerEvents = 'none';
+        // reset the shipsCounter for the computer's placement
+        placeShipsCounter = 1;
+        placeShips(event, compBoard);
         startBtn.classList.add('hide');
         resetBtn.classList.add('hide');
         gameLoop();
@@ -262,14 +270,23 @@ const placeShips = (e, board) => {
     let length;
 
     let coordinates = [];
-    let targetCoordinate = e.target.dataset.coordinate;
+
+    let targetCoordinate;
+
+    if (board === compBoard) {
+        console.log('computer placing ships randomly');
+        targetCoordinate = computer.randomCoordinate();
+        console.log(targetCoordinate);
+    } else {
+        targetCoordinate = e.target.dataset.coordinate;
+    }
+
     let targetCoordinateLetter = targetCoordinate.slice(0, 1);
     let targetCoordinateNum = targetCoordinate.slice(1, targetCoordinate.length);
 
     coordinates.push(targetCoordinate);
 
     let placedShipCoordinates = board.gameboard.ships;
-    let overlap = false;
 
     length = placeShipsCounter + 1;
     board.gameboard.ships.splice((placeShipsCounter - 1), 1);
@@ -289,16 +306,7 @@ const placeShips = (e, board) => {
         }
 
         // test if any of the coordinates are in the board.gameboard.ships arrays
-        // move into a separate function
-        placedShipCoordinates.forEach((ship) => {
-            ship.coordinates.forEach((coordinate) => {
-                console.log(coordinate);
-                if (coordinates.includes(coordinate)) {
-                    console.log('invalid tile');
-                    overlap = true;
-                }
-            })
-        })
+        testForOverlap(placedShipCoordinates, coordinates);
 
         if (overlap === true) {
             messageDisplay.innerText = "Invalid tile. Make another selection";
@@ -323,16 +331,7 @@ const placeShips = (e, board) => {
         }
 
         // test if any of the coordinates are in the board.gameboard.ships arrays
-        // move into separate function
-        placedShipCoordinates.forEach((ship) => {
-            ship.coordinates.forEach((coordinate) => {
-                console.log(coordinate);
-                if (coordinates.includes(coordinate)) {
-                    console.log('invalid tile');
-                    overlap = true;
-                }
-            })
-        })
+        testForOverlap(placedShipCoordinates, coordinates);
 
         if (overlap === true) {
             messageDisplay.innerText = "Invalid tile. Make another selection";
@@ -367,6 +366,21 @@ const placeShipsRender = (placeShipsCounter, length, coordinates, board) => {
     }
 
     validShipTiles = true;
+}
+
+const testForOverlap = (placedShipCoordinates, coordinates) => {
+    overlap = false;
+
+    placedShipCoordinates.forEach((ship) => {
+        ship.coordinates.forEach((coordinate) => {
+            console.log(coordinate);
+            if (coordinates.includes(coordinate)) {
+                console.log('invalid tile');
+                overlap = true;
+                console.log(overlap);
+            }
+        })
+    })
 }
 
 const changeOrientation = (direction) => {
