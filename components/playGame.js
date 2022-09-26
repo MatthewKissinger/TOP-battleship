@@ -3,16 +3,6 @@ import { gameboardFactory } from "./gameboardFactory.js";
 import { shipFactory } from "./shipFactory.js";
 import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI, resetShipNamesUI } from "./domRender.js";
 
-// 1 of each of the following ships
-// carrier - length 5
-// battleship - length 4
-// cruiser - length 3
-// submarine - length 3
-// destroyer - length 2
-
-// TODO 
-// 1) workout the logic for both the user and computer placing ships on the board before the start of the game
-
 // *** GLOBAL VARIABLES
 let player;
 let computer;
@@ -22,14 +12,23 @@ let compBoard;
 
 let destroyer;
 let submarine;
+let cruiser;
+let battleship;
+let carrier;
 
 let compDestroyer;
 let compSubmarine;
+let compCruiser;
+let compBattleship;
+let compCarrier;
 
 // global variable -- change to true once all of the ships have been placed, this will trigger the compBoard click event listener for the game
 let shipsPlaced = false;
 let placeShipsCounter = 1;
 let orientation = 'horizontal';
+
+// used to test whether the user can proceed to placing the next ship by pressing the next button
+let validShipTiles = false;
 
 // *** DOM CACHE ***
 let messageDisplay = document.querySelector('.message-display');
@@ -59,11 +58,6 @@ const playGame = () => {
     playerBoard = gameboardFactory(player.name);
     compBoard = gameboardFactory(computer.name);
 
-    // player ship placement phase
-    // submarine = shipFactory('Submarine', 3, ['b4', 'c4','d4']);
-
-    // playerBoard.placeShip(submarine);
-
     compDestroyer = shipFactory('Destroyer', 2, ['c1', 'd1']);
     compSubmarine = shipFactory('Submarine', 3, ['e5', 'e6', 'e7']);
 
@@ -84,6 +78,7 @@ const playGame = () => {
 
     nextBtn.addEventListener('click', () => {
         console.log('move on to the next ship to be placed');
+        console.log(validShipTiles);
         // update the placeShipsCounter variable 
         // update the message display
     });
@@ -230,7 +225,6 @@ const gameOverFunc = (winner) => {
     gameOverCont.classList.remove('hide');
 
     gameOverWinner.innerText = `${winner} wins!`;
-
 }
 
 const resetVariables = () => {
@@ -262,57 +256,76 @@ const placeUserShips = (e) => {
 
     console.log(playerBoard.gameboard.ships);
 
-    // separate into a function
-    // receive arg of placeShips Counter
-    // that will determine the length variable
+    length = placeShipsCounter + 1;
+    playerBoard.gameboard.ships.splice((placeShipsCounter - 1), 1);
+    renderShips(playerBoard);
 
-    if (placeShipsCounter === 1) {
-        length = placeShipsCounter + 1;
-        playerBoard.gameboard.ships.splice((placeShipsCounter - 1), 1);
-        renderShips(playerBoard);
-
-        if (orientation === 'horizontal') {
-            if ((parseInt(targetCoordinateNum) + (length - 1)) > 10) {
-                messageDisplay.innerText = 'Invalid tile. Make another selection';
-                return;
-            } else {
-                messageDisplay.innerText = 'Press next to confirm selection';
-            }
-
-            for (let i = 1; i < length; i++) {
-                let newCoordinate = targetCoordinateLetter + (parseInt(targetCoordinateNum) + i);
-                coordinates.push(newCoordinate);
-            }
-
-            // separate into a function -- use a switch statement for placeShipsCounter variable to get the destroyer and 'Destroyer' variables
-            // input args will be placeshipsCounter, length, coordinates
-            destroyer = shipFactory('Destroyer', length, coordinates);
-            playerBoard.placeShip(destroyer);
-            renderShips(playerBoard);
-            // 
-
-        } else if (orientation === 'vertical') {
-            let letterCharCode = targetCoordinateLetter.charCodeAt(0);
-            console.log(letterCharCode);
-            if ((parseInt(letterCharCode) + (length - 1)) > 106) {
-                messageDisplay.innerText = 'Invalid tile. Make another selection';
-                return;
-            } else {
-                messageDisplay.innerText = 'Press next to confirm selection';
-            }
-
-            for (let i = 1; i < length; i++) {
-                let newCoordinate = String.fromCharCode(letterCharCode + i) + targetCoordinateNum;
-                coordinates.push(newCoordinate);
-            }
-
-            // separate into a function
-            destroyer = shipFactory('Destroyer', length, coordinates);
-            playerBoard.placeShip(destroyer);
-            renderShips(playerBoard);
-            //
+    if (orientation === 'horizontal') {
+        if ((parseInt(targetCoordinateNum) + (length - 1)) > 10) {
+            messageDisplay.innerText = 'Invalid tile. Make another selection';
+            return;
+        } else {
+            messageDisplay.innerText = 'Press next to confirm selection';
         }
+
+        for (let i = 1; i < length; i++) {
+            let newCoordinate = targetCoordinateLetter + (parseInt(targetCoordinateNum) + i);
+            coordinates.push(newCoordinate);
+        }
+
+        // test if any of the coordinates are in the board.gameboard.ships arrays
+        placeShipsRender(placeShipsCounter, length, coordinates, playerBoard);
+
+    } else if (orientation === 'vertical') {
+        let letterCharCode = targetCoordinateLetter.charCodeAt(0); 
+
+        if ((parseInt(letterCharCode) + (length - 1)) > 106) {
+            messageDisplay.innerText = 'Invalid tile. Make another selection';
+            return;
+        } else {
+            messageDisplay.innerText = 'Press next to confirm selection';
+        }
+
+        for (let i = 1; i < length; i++) {
+            let newCoordinate = String.fromCharCode(letterCharCode + i) + targetCoordinateNum;
+            coordinates.push(newCoordinate);
+        }
+
+        // test if any of the coordinates are in the board.gameboard.ships arrays
+
+        placeShipsRender(placeShipsCounter, length, coordinates, playerBoard);
+    }   
+}
+
+const placeShipsRender = (placeShipsCounter, length, coordinates, board) => {
+    switch(placeShipsCounter) {
+        case 1:
+            destroyer = shipFactory('Destroyer', length, coordinates);
+            board.placeShip(destroyer);
+            renderShips(board);
+            break;
+        case 2:
+            submarine = shipFactory('Submarine', length, coordinates);
+            board.placeShip(submarine);
+            renderShips(board);
+            break;
+        case 3:
+            cruiser = shipFactory('Cruiser', length, coordinates);
+            board.placeShip(cruiser);
+            renderShips(board);
+            break;
+        case 4:
+            battleship = shipFactory('Battleship', length, coordinates);
+            board.placeShip(battleship);
+            renderShips(board);
+            break;
+        case 5:
+            carrier = shipFactory('Carrier', length, coordinates);
+            board.placeShip(carrier);
+            renderShips(board);    
     }
+
+    validShipTiles = true;
 }
 
 const changeOrientation = (direction) => {
