@@ -12,13 +12,11 @@ let compBoard;
 
 let destroyer;
 let submarine;
-let cruiser;
 let battleship;
 let carrier;
 
 let compDestroyer;
 let compSubmarine;
-let compCruiser;
 let compBattleship;
 let compCarrier;
 
@@ -77,13 +75,25 @@ const playGame = () => {
     });
 
     nextBtn.addEventListener('click', () => {
-        console.log('move on to the next ship to be placed');
         console.log(validShipTiles);
-        // update the placeShipsCounter variable 
-        // update the message display
+        if (validShipTiles === true) {
+            if (validShipTiles === true && placeShipsCounter === 4) {
+                console.log('this is the last ship');
+                shipDirectionBtn.classList.add('hide');
+                nextBtn.classList.add('hide');
+                startBtn.classList.remove('hide');
+                messageDisplay.innerText = "Press the start button to confirm your ship placements and begin the match";
+                return;
+            }
+            placeShipsCounter++;
+            validShipTiles = false;
+            messageDisplay.innerText = "Click a coordinate to place your next ship";
+        } else {
+            messageDisplay.innerText = "ship not placed or valid coordinate not selected, choose again";
+        }
     });
 
-    userGameboard.addEventListener('click', placeUserShips, false);
+    userGameboard.addEventListener('click', () => {placeShips(event, playerBoard)}, false);
 
     startBtn.addEventListener('click', () => {
         startBtn.classList.add('hide');
@@ -236,12 +246,16 @@ const resetVariables = () => {
 
     destroyer = undefined;
     submarine = undefined;
+    battleship = undefined;
+    carrier = undefined;
 
     compDestroyer = undefined;
     compSubmarine = undefined;
+    compBattleship = undefined;
+    compCarrier = undefined;
 }
 
-const placeUserShips = (e) => {
+const placeShips = (e, board) => {
     // stop click events on user gameboard
     // userGameboard.style.pointerEvents = 'none';
 
@@ -254,11 +268,12 @@ const placeUserShips = (e) => {
 
     coordinates.push(targetCoordinate);
 
-    console.log(playerBoard.gameboard.ships);
+    let placedShipCoordinates = board.gameboard.ships;
+    let overlap = false;
 
     length = placeShipsCounter + 1;
-    playerBoard.gameboard.ships.splice((placeShipsCounter - 1), 1);
-    renderShips(playerBoard);
+    board.gameboard.ships.splice((placeShipsCounter - 1), 1);
+    renderShips(board);
 
     if (orientation === 'horizontal') {
         if ((parseInt(targetCoordinateNum) + (length - 1)) > 10) {
@@ -274,7 +289,23 @@ const placeUserShips = (e) => {
         }
 
         // test if any of the coordinates are in the board.gameboard.ships arrays
-        placeShipsRender(placeShipsCounter, length, coordinates, playerBoard);
+        // move into a separate function
+        placedShipCoordinates.forEach((ship) => {
+            ship.coordinates.forEach((coordinate) => {
+                console.log(coordinate);
+                if (coordinates.includes(coordinate)) {
+                    console.log('invalid tile');
+                    overlap = true;
+                }
+            })
+        })
+
+        if (overlap === true) {
+            messageDisplay.innerText = "Invalid tile. Make another selection";
+            return;
+        } else {
+            placeShipsRender(placeShipsCounter, length, coordinates, board);
+        }
 
     } else if (orientation === 'vertical') {
         let letterCharCode = targetCoordinateLetter.charCodeAt(0); 
@@ -292,8 +323,23 @@ const placeUserShips = (e) => {
         }
 
         // test if any of the coordinates are in the board.gameboard.ships arrays
+        // move into separate function
+        placedShipCoordinates.forEach((ship) => {
+            ship.coordinates.forEach((coordinate) => {
+                console.log(coordinate);
+                if (coordinates.includes(coordinate)) {
+                    console.log('invalid tile');
+                    overlap = true;
+                }
+            })
+        })
 
-        placeShipsRender(placeShipsCounter, length, coordinates, playerBoard);
+        if (overlap === true) {
+            messageDisplay.innerText = "Invalid tile. Make another selection";
+            return;
+        } else {
+            placeShipsRender(placeShipsCounter, length, coordinates, board);
+        }
     }   
 }
 
@@ -310,16 +356,11 @@ const placeShipsRender = (placeShipsCounter, length, coordinates, board) => {
             renderShips(board);
             break;
         case 3:
-            cruiser = shipFactory('Cruiser', length, coordinates);
-            board.placeShip(cruiser);
-            renderShips(board);
-            break;
-        case 4:
             battleship = shipFactory('Battleship', length, coordinates);
             board.placeShip(battleship);
             renderShips(board);
             break;
-        case 5:
+        case 4:
             carrier = shipFactory('Carrier', length, coordinates);
             board.placeShip(carrier);
             renderShips(board);    
