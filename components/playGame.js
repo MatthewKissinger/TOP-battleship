@@ -4,8 +4,9 @@ import { shipFactory } from "./shipFactory.js";
 import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI, resetShipNamesUI } from "./domRender.js";
 
 // TODO LIST
-// *** reset ships brings us back to the beginning
 // *** fix bug from pressing the rematch button after a match
+// *** fix user being able to press an already chosen tile bug
+// *** fix sunken ship UI bug -- registering on both gameboards
 
 // *** GLOBAL VARIABLES
 let player;
@@ -59,29 +60,25 @@ const playGame = () => {
 
     resetBtn.addEventListener('click', () => {
         console.log('run the reset ship location function');
+        renderDOM();
+        resetShipNamesUI();
+        resetVariables();
+        placeShipsCounter = 1;
+        overlap = false;
+        validShipTiles = false;
+        messageDisplay.innerText = 'Click a coordinate on the User board to place your Ships';
+        // remove event listeners
+        compTurnBtn.removeEventListener('click', onCompTurnBtnClick, false);
+        compGameboard.removeEventListener('click', onCompGameboardClick, false);
+        nextBtn.removeEventListener('click', onNextBtnClick, false);
+        playGame();
     });
 
     shipDirectionBtn.addEventListener('click', () => {
         changeOrientation(orientation);
     });
 
-    nextBtn.addEventListener('click', () => {
-        console.log(validShipTiles);
-        if (validShipTiles === true) {
-            if (validShipTiles === true && placeShipsCounter === 4) {
-                shipDirectionBtn.classList.add('hide');
-                nextBtn.classList.add('hide');
-                startBtn.classList.remove('hide');
-                messageDisplay.innerText = "Press the start button to confirm your ship placements and begin the match";
-                return;
-            }
-            placeShipsCounter++;
-            validShipTiles = false;
-            messageDisplay.innerText = "Click a coordinate to place your next ship";
-        } else {
-            messageDisplay.innerText = "ship not placed or valid coordinate not selected, choose again";
-        }
-    });
+    nextBtn.addEventListener('click', onNextBtnClick, false);
 
     userGameboard.addEventListener('click', () => {placeShips(event, playerBoard)}, false);
 
@@ -125,12 +122,14 @@ const playGame = () => {
         compTurnBtn.removeEventListener('click', onCompTurnBtnClick, false);
         compGameboard.removeEventListener('click', onCompGameboardClick, false);
 
-        playGame();
+       
         gameOverCont.classList.add('hide');
         resetBtn.classList.remove('hide');
-        startBtn.classList.remove('hide');
+        nextBtn.classList.remove('hide');
+        shipDirectionBtn.classList.remove('hide');
 
-        messageDisplay.innerText = `Press Start to Begin the Game`;
+        messageDisplay.innerText = `Click a coordinate on the User board to place your Ships`;
+        playGame();
     })
 
     // start game function after clicking the startBtn or rematch button
@@ -233,6 +232,24 @@ const onCompGameboardClick = (e) => {
     compTurnBtn.classList.remove('hide');
 
     compGameboard.style.pointerEvents = "none";
+}
+
+const onNextBtnClick = () => {
+    console.log(validShipTiles);
+        if (validShipTiles === true) {
+            if (validShipTiles === true && placeShipsCounter === 4) {
+                shipDirectionBtn.classList.add('hide');
+                nextBtn.classList.add('hide');
+                startBtn.classList.remove('hide');
+                messageDisplay.innerText = "Press the start button to confirm your ship placements and begin the match";
+                return;
+            }
+            placeShipsCounter++;
+            validShipTiles = false;
+            messageDisplay.innerText = "Click a coordinate to place your next ship";
+        } else {
+            messageDisplay.innerText = "ship not placed or valid coordinate not selected, choose again";
+        }
 }
 
 const gameOverFunc = (winner) => {
@@ -341,8 +358,6 @@ const placeShipsRender = (placeShipsCounter, length, coordinates, board) => {
             if (board.gameboard.user === 'player') {
                 renderShips(board);
             }
-            // renderShips(board);
-            console.log(board);
             break;
         case 2:
             submarine = shipFactory('Submarine', length, coordinates);
