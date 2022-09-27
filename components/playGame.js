@@ -4,8 +4,8 @@ import { shipFactory } from "./shipFactory.js";
 import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI, resetShipNamesUI } from "./domRender.js";
 
 // TODO LIST
-// *** randomly generate the computer ship placements
-//    ** trigger placeShips function for comp at click of start button
+// *** reset ships brings us back to the beginning
+// *** fix bug from pressing the rematch button after a match
 
 // *** GLOBAL VARIABLES
 let player;
@@ -18,11 +18,6 @@ let destroyer;
 let submarine;
 let battleship;
 let carrier;
-
-let compDestroyer;
-let compSubmarine;
-let compBattleship;
-let compCarrier;
 
 // global variable -- change to true once all of the ships have been placed, this will trigger the compBoard click event listener for the game
 let placeShipsCounter = 1;
@@ -60,14 +55,6 @@ const playGame = () => {
     playerBoard = gameboardFactory(player.name);
     compBoard = gameboardFactory(computer.name);
 
-    // compDestroyer = shipFactory('Destroyer', 2, ['c1', 'd1']);
-    // compSubmarine = shipFactory('Submarine', 3, ['e5', 'e6', 'e7']);
-
-    // compBoard.placeShip(compDestroyer);
-    // compBoard.placeShip(compSubmarine);
-
-    // renderShips(compBoard);
-
     // *** EVENT LISTENERS ***
 
     resetBtn.addEventListener('click', () => {
@@ -101,9 +88,19 @@ const playGame = () => {
     startBtn.addEventListener('click', () => {
         // stop click events on user gameboard
         userGameboard.style.pointerEvents = 'none';
-        // reset the shipsCounter for the computer's placement
+        // reset global variables for the computer's placement
+        validShipTiles = false;
         placeShipsCounter = 1;
-        placeShips(event, compBoard);
+
+        for (let i = 0; i < 4; i++) {
+
+            while (validShipTiles === false) {
+                placeShips(event, compBoard); 
+            }
+            placeShipsCounter++;
+            validShipTiles = false;
+        }
+
         startBtn.classList.add('hide');
         resetBtn.classList.add('hide');
         gameLoop();
@@ -256,27 +253,19 @@ const resetVariables = () => {
     submarine = undefined;
     battleship = undefined;
     carrier = undefined;
-
-    compDestroyer = undefined;
-    compSubmarine = undefined;
-    compBattleship = undefined;
-    compCarrier = undefined;
 }
 
 const placeShips = (e, board) => {
-    // stop click events on user gameboard
-    // userGameboard.style.pointerEvents = 'none';
 
     let length;
-
     let coordinates = [];
-
     let targetCoordinate;
 
     if (board === compBoard) {
-        console.log('computer placing ships randomly');
         targetCoordinate = computer.randomCoordinate();
-        console.log(targetCoordinate);
+
+        // randomize ship orientation function here **
+        randomOrientation();
     } else {
         targetCoordinate = e.target.dataset.coordinate;
     }
@@ -290,7 +279,9 @@ const placeShips = (e, board) => {
 
     length = placeShipsCounter + 1;
     board.gameboard.ships.splice((placeShipsCounter - 1), 1);
-    renderShips(board);
+    if (board.gameboard.user === 'player') {
+        renderShips(board);
+    }
 
     if (orientation === 'horizontal') {
         if ((parseInt(targetCoordinateNum) + (length - 1)) > 10) {
@@ -347,22 +338,32 @@ const placeShipsRender = (placeShipsCounter, length, coordinates, board) => {
         case 1:
             destroyer = shipFactory('Destroyer', length, coordinates);
             board.placeShip(destroyer);
-            renderShips(board);
+            if (board.gameboard.user === 'player') {
+                renderShips(board);
+            }
+            // renderShips(board);
+            console.log(board);
             break;
         case 2:
             submarine = shipFactory('Submarine', length, coordinates);
             board.placeShip(submarine);
-            renderShips(board);
+            if (board.gameboard.user === 'player') {
+                renderShips(board);
+            }
             break;
         case 3:
             battleship = shipFactory('Battleship', length, coordinates);
             board.placeShip(battleship);
-            renderShips(board);
+            if (board.gameboard.user === 'player') {
+                renderShips(board);
+            }
             break;
         case 4:
             carrier = shipFactory('Carrier', length, coordinates);
             board.placeShip(carrier);
-            renderShips(board);    
+            if (board.gameboard.user === 'player') {
+                renderShips(board);
+            }    
     }
 
     validShipTiles = true;
@@ -373,7 +374,6 @@ const testForOverlap = (placedShipCoordinates, coordinates) => {
 
     placedShipCoordinates.forEach((ship) => {
         ship.coordinates.forEach((coordinate) => {
-            console.log(coordinate);
             if (coordinates.includes(coordinate)) {
                 console.log('invalid tile');
                 overlap = true;
@@ -391,6 +391,16 @@ const changeOrientation = (direction) => {
             orientation = 'horizontal';
             shipDirectionBtn.innerText = 'horizontal';
         }
+}
+
+const randomOrientation = () => {
+    let randomNum = Math.floor((Math.random() * 10) + 1);
+
+    if (randomNum >= 6) {
+        orientation = 'vertical';
+    } else {
+        orientation = 'horizontal';
+    }
 }
 
 export { playGame }
