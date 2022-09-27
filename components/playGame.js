@@ -4,9 +4,12 @@ import { shipFactory } from "./shipFactory.js";
 import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI, resetShipNamesUI } from "./domRender.js";
 
 // TODO LIST
+// *** after last ship is placed by user, change message prompt and pressing next will remove the reset button as well
 // *** fix bug from pressing the rematch button after a match
 // *** fix user being able to press an already chosen tile bug
 // *** fix sunken ship UI bug -- registering on both gameboards
+
+// show COMP ship rendering for bug work
 
 // *** GLOBAL VARIABLES
 let player;
@@ -58,92 +61,38 @@ const playGame = () => {
 
     // *** EVENT LISTENERS ***
 
-    resetBtn.addEventListener('click', () => {
-        console.log('run the reset ship location function');
-        renderDOM();
-        resetShipNamesUI();
-        resetVariables();
-        placeShipsCounter = 1;
-        overlap = false;
-        validShipTiles = false;
-        messageDisplay.innerText = 'Click a coordinate on the User board to place your Ships';
-        // remove event listeners
-        compTurnBtn.removeEventListener('click', onCompTurnBtnClick, false);
-        compGameboard.removeEventListener('click', onCompGameboardClick, false);
-        nextBtn.removeEventListener('click', onNextBtnClick, false);
-        playGame();
-    });
+    resetBtn.addEventListener('click', onResetBtnClick, false);
 
-    shipDirectionBtn.addEventListener('click', () => {
-        changeOrientation(orientation);
-    });
+    shipDirectionBtn.addEventListener('click', onShipDirectionBtnClick, false);
 
     nextBtn.addEventListener('click', onNextBtnClick, false);
 
     userGameboard.addEventListener('click', () => {placeShips(event, playerBoard)}, false);
 
-    startBtn.addEventListener('click', () => {
-        // stop click events on user gameboard
-        userGameboard.style.pointerEvents = 'none';
-        // reset global variables for the computer's placement
-        validShipTiles = false;
-        placeShipsCounter = 1;
-
-        for (let i = 0; i < 4; i++) {
-
-            while (validShipTiles === false) {
-                placeShips(event, compBoard); 
-            }
-            placeShipsCounter++;
-            validShipTiles = false;
-        }
-
-        startBtn.classList.add('hide');
-        resetBtn.classList.add('hide');
-        gameLoop();
-    });
+    startBtn.addEventListener('click', onStartBtnClick, false);
 
     compTurnBtn.addEventListener('click', onCompTurnBtnClick, false);
 
-    userTurnBtn.addEventListener('click', () => {
-        userTurnBtn.classList.add('hide');
-        playerTurn();
-    }); 
+    userTurnBtn.addEventListener('click', onUserTurnBtnClick, false); 
 
     compGameboard.addEventListener('click', onCompGameboardClick, false); 
     
-    rematchBtn.addEventListener('click', (e) => {
-        console.log('reset all variables and call playGame function again');
-        renderDOM();
-        resetShipNamesUI();
-        resetVariables();
-
-        // remove all event listeners that duplicate
-        compTurnBtn.removeEventListener('click', onCompTurnBtnClick, false);
-        compGameboard.removeEventListener('click', onCompGameboardClick, false);
-
-       
-        gameOverCont.classList.add('hide');
-        resetBtn.classList.remove('hide');
-        nextBtn.classList.remove('hide');
-        shipDirectionBtn.classList.remove('hide');
-
-        messageDisplay.innerText = `Click a coordinate on the User board to place your Ships`;
-        playGame();
-    })
-
-    // start game function after clicking the startBtn or rematch button
-    const gameLoop = () => {
-        playerTurn();
-    }
-
-    const playerTurn = () => {
-        messageDisplay.innerText = `Player's turn: select a tile on the computer's board`;
-
-        // make sure the user is able to click the compGameboard
-        compGameboard.style.pointerEvents = "auto";
-    }  
+    rematchBtn.addEventListener('click', onRematchBtnClick, false);
 }
+
+// *** GLOBAL FUNCTIONS ***
+
+// start game function after clicking the startBtn or rematch button
+const gameLoop = () => {
+    playerTurn();
+}
+
+const playerTurn = () => {
+    messageDisplay.innerText = `Player's turn: select a tile on the computer's board`;
+
+    // make sure the user is able to click the compGameboard
+    compGameboard.style.pointerEvents = "auto";
+}  
 
 const renderMessage = (selection, message, target, board) => {
     if (message.hit === undefined) {
@@ -174,8 +123,6 @@ const renderMessage = (selection, message, target, board) => {
         messageDisplay.innerText = `${selection} ${displayedMsg}`;
     }
 }
-
-// *** GLOBAL FUNCTIONS ***
 
 const compTurn = () => {
 
@@ -212,9 +159,52 @@ const compTurn = () => {
     }, 1000)
 }
 
+// EVENT Listener declared functions
+
+const onResetBtnClick = () => {
+    console.log('run the reset ship location function');
+    renderDOM();
+    resetShipNamesUI();
+    resetVariables();
+    placeShipsCounter = 1;
+    overlap = false;
+    validShipTiles = false;
+    messageDisplay.innerText = 'Click a coordinate on the User board to place your Ships';
+    // remove event listeners -- place reset into new function?
+    removeAllEventListeners();
+    playGame();
+}
+
+const onRematchBtnClick = () => {
+    console.log('reset all variables and call playGame function again');
+    renderDOM();
+    resetShipNamesUI();
+    resetVariables();
+
+    // remove all event listeners that duplicate
+    removeAllEventListeners();
+
+    gameOverCont.classList.add('hide');
+    resetBtn.classList.remove('hide');
+    nextBtn.classList.remove('hide');
+    shipDirectionBtn.classList.remove('hide');
+
+    messageDisplay.innerText = `Click a coordinate on the User board to place your Ships`;
+    playGame();
+}
+
+const onShipDirectionBtnClick = () => {
+    changeOrientation(orientation);
+}
+
 const onCompTurnBtnClick = () => {
     compTurnBtn.classList.add('hide');
     compTurn();
+}
+
+const onUserTurnBtnClick = () => {
+    userTurnBtn.classList.add('hide');
+    playerTurn();
 }
 
 const onCompGameboardClick = (e) => {
@@ -252,6 +242,29 @@ const onNextBtnClick = () => {
         }
 }
 
+const onStartBtnClick = () => {
+    // stop click events on user gameboard
+    userGameboard.style.pointerEvents = 'none';
+    // reset global variables for the computer's placement
+    validShipTiles = false;
+    placeShipsCounter = 1;
+
+    for (let i = 0; i < 4; i++) {
+
+        while (validShipTiles === false) {
+            placeShips(event, compBoard); 
+        }
+        placeShipsCounter++;
+        validShipTiles = false;
+    }
+
+    startBtn.classList.add('hide');
+    resetBtn.classList.add('hide');
+    gameLoop();
+}
+
+// ---------------------------
+
 const gameOverFunc = (winner) => {
     compGameboard.style.pointerEvents = "none";
     gameOverCont.classList.remove('hide');
@@ -271,6 +284,26 @@ const resetVariables = () => {
     battleship = undefined;
     carrier = undefined;
 }
+
+const removeAllEventListeners = () => {
+    resetBtn.removeEventListener('click', onResetBtnClick, false);
+
+    shipDirectionBtn.removeEventListener('click', onShipDirectionBtnClick, false);
+
+    nextBtn.removeEventListener('click', onNextBtnClick, false);
+
+    startBtn.removeEventListener('click', onStartBtnClick, false);
+
+    compTurnBtn.removeEventListener('click', onCompTurnBtnClick, false);
+
+    userTurnBtn.removeEventListener('click', onUserTurnBtnClick, false); 
+
+    compGameboard.removeEventListener('click', onCompGameboardClick, false); 
+    
+    rematchBtn.removeEventListener('click', onRematchBtnClick, false);
+}
+
+// ** place ships logic ** 
 
 const placeShips = (e, board) => {
 
@@ -321,6 +354,7 @@ const placeShips = (e, board) => {
             return;
         } else {
             placeShipsRender(placeShipsCounter, length, coordinates, board);
+            lastUserShipPlaced();
         }
 
     } else if (orientation === 'vertical') {
@@ -346,6 +380,7 @@ const placeShips = (e, board) => {
             return;
         } else {
             placeShipsRender(placeShipsCounter, length, coordinates, board);
+            lastUserShipPlaced();
         }
     }   
 }
@@ -396,6 +431,11 @@ const testForOverlap = (placedShipCoordinates, coordinates) => {
             }
         })
     })
+}
+
+const lastUserShipPlaced = () => {
+    console.log('change the message display to read something like last chance to reset your ships');
+    messageDisplay.innerText = 'Clicking next will confirm your ship placements, last chance to reset';
 }
 
 const changeOrientation = (direction) => {
