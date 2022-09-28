@@ -1,3 +1,5 @@
+import { onUserSelectsUsedTile } from "./playGame.js";
+
 // player factory that creates a player and a computer player 
 // it takes in the argument of name
 
@@ -22,6 +24,7 @@ const playerFactory = (name) => {
         // if it returns false - run the computer play again
         if (enemyBoard.gameboard.misses.includes(coordinate) || enemyBoard.gameboard.hits.includes(coordinate)) {
             console.log('that square has been called');
+            onUserSelectsUsedTile();
             return false;
         } else {
             let message = enemyBoard.receiveAttack(coordinate);

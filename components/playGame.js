@@ -4,12 +4,6 @@ import { shipFactory } from "./shipFactory.js";
 import { renderShips, renderHitOrMiss, renderDOM, renderShipsSunkUI, resetShipNamesUI } from "./domRender.js";
 
 // TODO LIST
-// *** after last ship is placed by user, change message prompt and pressing next will remove the reset button as well
-// *** fix bug from pressing the rematch button after a match
-// *** fix user being able to press an already chosen tile bug
-// *** fix sunken ship UI bug -- registering on both gameboards
-
-// show COMP ship rendering for bug work
 
 // *** GLOBAL VARIABLES
 let player;
@@ -189,7 +183,12 @@ const onRematchBtnClick = () => {
     nextBtn.classList.remove('hide');
     shipDirectionBtn.classList.remove('hide');
 
+    placeShipsCounter = 1;
+    overlap = false;
+    validShipTiles = false;
+
     messageDisplay.innerText = `Click a coordinate on the User board to place your Ships`;
+    userGameboard.style.pointerEvents = 'auto';
     playGame();
 }
 
@@ -207,10 +206,18 @@ const onUserTurnBtnClick = () => {
     playerTurn();
 }
 
+const onUserSelectsUsedTile = () => {
+    messageDisplay.innerText = 'That tile has already been selected, choose another';
+    // make sure the user is able to click the compGameboard
+    compGameboard.style.pointerEvents = "auto";
+}
+
 const onCompGameboardClick = (e) => {
     let selection = e.target.dataset.coordinate;
     let message = player.playerAttack(selection, compBoard);
     let target = e.target;
+
+    console.log(message);
 
     renderMessage(selection, message, target, 'comp');
     
@@ -219,9 +226,10 @@ const onCompGameboardClick = (e) => {
         return;
     }
 
-    compTurnBtn.classList.remove('hide');
-
-    compGameboard.style.pointerEvents = "none";
+    if (message !== false) {
+        compTurnBtn.classList.remove('hide');
+        compGameboard.style.pointerEvents = "none";
+    }
 }
 
 const onNextBtnClick = () => {
@@ -229,6 +237,7 @@ const onNextBtnClick = () => {
         if (validShipTiles === true) {
             if (validShipTiles === true && placeShipsCounter === 4) {
                 shipDirectionBtn.classList.add('hide');
+                resetBtn.classList.add('hide');
                 nextBtn.classList.add('hide');
                 startBtn.classList.remove('hide');
                 messageDisplay.innerText = "Press the start button to confirm your ship placements and begin the match";
@@ -259,7 +268,6 @@ const onStartBtnClick = () => {
     }
 
     startBtn.classList.add('hide');
-    resetBtn.classList.add('hide');
     gameLoop();
 }
 
@@ -354,7 +362,9 @@ const placeShips = (e, board) => {
             return;
         } else {
             placeShipsRender(placeShipsCounter, length, coordinates, board);
-            lastUserShipPlaced();
+            if (board.gameboard.user === 'player' && placeShipsCounter === 4) {
+                lastUserShipPlaced();
+            }
         }
 
     } else if (orientation === 'vertical') {
@@ -380,7 +390,9 @@ const placeShips = (e, board) => {
             return;
         } else {
             placeShipsRender(placeShipsCounter, length, coordinates, board);
-            lastUserShipPlaced();
+            if (board.gameboard.user === 'player' && placeShipsCounter === 4) {
+                lastUserShipPlaced();
+            }
         }
     }   
 }
@@ -413,7 +425,7 @@ const placeShipsRender = (placeShipsCounter, length, coordinates, board) => {
             board.placeShip(carrier);
             if (board.gameboard.user === 'player') {
                 renderShips(board);
-            }    
+            }  
     }
 
     validShipTiles = true;
@@ -434,7 +446,6 @@ const testForOverlap = (placedShipCoordinates, coordinates) => {
 }
 
 const lastUserShipPlaced = () => {
-    console.log('change the message display to read something like last chance to reset your ships');
     messageDisplay.innerText = 'Clicking next will confirm your ship placements, last chance to reset';
 }
 
@@ -458,4 +469,4 @@ const randomOrientation = () => {
     }
 }
 
-export { playGame }
+export { playGame, onUserSelectsUsedTile }
