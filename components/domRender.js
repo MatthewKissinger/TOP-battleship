@@ -93,9 +93,9 @@ const renderShips = (gameBoard) => {
     // convert userTiles HTMLCollection into an array then loop through each tile and test if it is a coordinate that has a placed ship
     Array.from(tiles).forEach((element) => {
       if (shipCoordinates.includes(element.dataset.coordinate)) {
-        element.style.backgroundColor = 'lightgray';
+        element.style.backgroundColor = '#8f8f8f';
       } else {
-        element.style.backgroundColor = 'rgb(0, 179, 255)';
+        element.style.backgroundColor = '#a8dadc';
       }
     })
 }
@@ -132,7 +132,7 @@ const renderShipsSunkUI = (shipArray, board) => {
         if (ship.sunk === true) {
             [...shipIcons].forEach((element) => {
                 if (ship.shipName === element.innerText) {
-                    element.style.color = 'red';
+                    element.style.color = '#e63946';
                 }
             })
         }

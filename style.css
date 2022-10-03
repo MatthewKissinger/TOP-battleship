@@ -6,7 +6,17 @@
 
 /* variables for styling */
 
+:root {
+    --red: #e63946;
+    --off-white: #f1faee;
+    --light-blue: #a8dadc;
+    --blue: #457b9d;
+    --dark-blue: #1d3557;
+    --battleship-gray: #8f8f8f;
+}
+
 body {
+    background-color: var(--off-white);
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -15,6 +25,8 @@ body {
 
 .header {
     display: flex;
+    background-color: var(--blue);
+    color: white;
     justify-content: center;
     align-items: center;
     height: 7%;
@@ -23,16 +35,18 @@ body {
 }
 
 .message-display {
+    font-weight: 700;
+    color: var(--dark-blue);
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgb(204, 193, 204);
     border-radius: 10px;
     height: 8%;
     width: 50%;
     text-align: center;
     padding: 1rem;
-    margin: 0 auto;
+    margin: 1.5rem auto .5rem;
 }
 
 .btn-container {
@@ -41,11 +55,11 @@ body {
     justify-content: center;
     gap: 2rem;
     height: 5%;
-    margin: 1rem 0;
+    margin: .5rem 0;
 }
 
 .btn-container button, .rematch-btn {
-    background-color: orange;
+    background-color: var(--dark-blue);
     border: none;
     color: white;
     cursor: pointer;
@@ -69,8 +83,8 @@ main {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    border: 1px solid orange;
-    background-color: orange;
+    border: 1px solid var(--red);
+    background-color: var(--red);
     color: white;
     padding: 3rem;
     border-radius: 12px;
@@ -86,15 +100,15 @@ main {
 }
 
 .rematch-btn {
-    background-color: white;
-    color: orange;
+    background-color: var(--dark-blue);
+    color: white;
 }
 
 .user-container, .comp-container {
+    color: var(--dark-blue);
     display: grid;
-    grid-template-rows: 1fr 5fr;
+    grid-template-rows: .5fr 5fr;
     grid-template-columns: 1fr 5fr;
-    border: 1px solid orange;
     border-radius: 12px;
     height: 700px;
     width: 47%;
@@ -109,14 +123,16 @@ main {
 }
 
 .user-ship-cont, .comp-ship-cont {
-    border: 1px solid rgb(141, 141, 232);
+    font-weight: 700;
+    color: var(--dark-blue);
+    text-transform: uppercase;
     border-radius: 6px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    height: 90%;
-    align-self: flex-end;
+    height: 60%;
+    align-self: center;
 }
 
 .user-gameboard, .comp-gameboard {
@@ -143,6 +159,8 @@ main {
 }
 
 .tile-label {
+    color: var(--dark-blue);
+    font-weight: 700;
     width: 50px;
     height: 50px;
     /* border: 1px solid purple; */
@@ -162,8 +180,8 @@ main {
 }
 
 .user-tile, .comp-tile {
-    border: 1px solid black;
-    background-color: rgb(0, 179, 255);
+    border: 1px solid var(--dark-blue);
+    background-color: var(--light-blue);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -178,7 +196,7 @@ main {
 }
 
 .hit-marker {
-    background-color: red;
+    background-color: var(--red);
 }
 
 /* hide toggle class */
