@@ -8,11 +8,11 @@
 
 :root {
     --red: #e63946;
-    --off-white: #f1faee;
+    --off-white: #e9e9e9;
     --light-blue: #a8dadc;
     --blue: #457b9d;
     --dark-blue: #1d3557;
-    --battleship-gray: #8f8f8f;
+    --battleship-gray: #b6b6b6;
 }
 
 body {
@@ -29,7 +29,7 @@ body {
     color: white;
     justify-content: center;
     align-items: center;
-    height: 7%;
+    height: 12%;
     font-weight: 700;
     font-size: 2.5rem;
 }
@@ -42,6 +42,7 @@ body {
     align-items: center;
     justify-content: center;
     border-radius: 10px;
+    border: 2px solid var(--light-blue);
     height: 8%;
     width: 50%;
     text-align: center;
@@ -116,6 +117,9 @@ main {
 }
 
 .title--cont {
+    /* border: 1px solid purple; */
+    margin-left: 2rem;
+    margin-bottom: -3rem;
     grid-column: 1 / 3;
     grid-row: 1 / 2;
     align-self: center;
@@ -125,7 +129,6 @@ main {
 .user-ship-cont, .comp-ship-cont {
     font-weight: 700;
     color: var(--dark-blue);
-    text-transform: uppercase;
     border-radius: 6px;
     display: flex;
     flex-direction: column;
@@ -202,4 +205,15 @@ main {
 /* hide toggle class */
 .hide {
     display: none;
+}
+
+.footer {
+    height: 10%;
+    font-weight: 500;
+    letter-spacing: 1px;
+    background-color: var(--blue);
+    display: flex;
+    color: var(--off-white);
+    justify-content: center;
+    align-items: center;
 }

@@ -107,12 +107,13 @@ const renderMessage = (selection, message, target, board) => {
         let boardName;
         if (board === 'comp') {
             boardName = 'computer';
+            renderShipsSunkUI(compBoard.gameboard.ships, board);
         } else {
             boardName = 'user';
+            renderShipsSunkUI(playerBoard.gameboard.ships, board);
         }
 
         messageDisplay.innerText = `${selection} ${displayedMsg}, ${boardName}'s ${message.sunkShipName} is sunk`;
-        renderShipsSunkUI(compBoard.gameboard.ships, board);
     } else {
         messageDisplay.innerText = `${selection} ${displayedMsg}`;
     }
@@ -233,7 +234,7 @@ const onCompGameboardClick = (e) => {
 }
 
 const onNextBtnClick = () => {
-    console.log(validShipTiles);
+    // console.log(validShipTiles);
         if (validShipTiles === true) {
             if (validShipTiles === true && placeShipsCounter === 4) {
                 shipDirectionBtn.classList.add('hide');
@@ -437,9 +438,7 @@ const testForOverlap = (placedShipCoordinates, coordinates) => {
     placedShipCoordinates.forEach((ship) => {
         ship.coordinates.forEach((coordinate) => {
             if (coordinates.includes(coordinate)) {
-                console.log('invalid tile');
                 overlap = true;
-                console.log(overlap);
             }
         })
     })
